@@ -155,6 +155,82 @@
     }
     .stats strong { color: var(--green); font-weight: 700; }
 
+    /* WHY IT MATTERS STAT BAND */
+    .why-band {
+      background: var(--paper-dim);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 40px 0;
+      margin-top: 8px;
+    }
+    .why-inner { width: 90%; max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+    .why-inner h2 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-faint);
+      margin-bottom: 20px;
+    }
+    .why-grid { display: flex; flex-wrap: wrap; gap: 36px; }
+    .why-stat { flex: 1 1 200px; min-width: 180px; }
+    .why-stat .num {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 34px;
+      font-weight: 600;
+      color: var(--green);
+      line-height: 1.1;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .why-stat p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
+    .why-source { font-size: 11.5px; color: var(--ink-faint); margin-top: 22px; }
+    .why-source a { color: var(--ink-faint); text-decoration: underline; }
+
+    /* TRANSPARENCY SCORE PREVIEW */
+    .score-preview {
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      padding: 20px 22px;
+      margin: 14px 0 24px;
+      background: var(--amber-tint);
+    }
+    .score-preview .score-tag {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: rgba(138, 90, 11, 0.12);
+      padding: 3px 9px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .score-preview p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 10px; }
+    .score-preview p:last-child { margin-bottom: 0; }
+    .score-bar-demo { display: flex; gap: 6px; margin: 12px 0 14px; }
+    .score-bar-demo span {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--line-strong);
+    }
+    .score-bar-demo span.filled { background: var(--amber); }
+
+    /* JOIN THE TEAM CALLOUT */
+    .join-callout {
+      border: 1px solid var(--green);
+      border-radius: 10px;
+      padding: 22px;
+      margin: 24px 0;
+      background: var(--green-tint);
+    }
+    .join-callout h3 { margin: 0 0 8px !important; }
+    .join-callout p { margin-bottom: 10px; }
+    .join-callout .btn-green { display: inline-block; text-decoration: none; margin-top: 4px; }
+
     .main-content { width: 90%; max-width: 1200px; margin: 0 auto; padding: 8px 28px 72px; }
 
     .filter-row {
@@ -373,6 +449,31 @@
     </div>
   </div>
 
+  <div class="why-band">
+    <div class="why-inner">
+      <h2>Why this matters</h2>
+      <div class="why-grid">
+        <div class="why-stat">
+          <span class="num">33M</span>
+          <p>Americans live with a food allergy — roughly 1 in 10 adults and 1 in 13 children.</p>
+        </div>
+        <div class="why-stat">
+          <span class="num">3.4M</span>
+          <p>ER visits happen each year in the US for food allergy reactions.</p>
+        </div>
+        <div class="why-stat">
+          <span class="num">50%+</span>
+          <p>Of fatal food allergy reactions happen in restaurants or other food-service establishments — exactly where published allergen info matters most.</p>
+        </div>
+        <div class="why-stat">
+          <span class="num">&uarr;50%</span>
+          <p>Rise in childhood food allergy prevalence in the US between 2007 and 2021 alone — and still climbing.</p>
+        </div>
+      </div>
+      <p class="why-source">Sources: <a href="https://www.foodallergy.org/resources/facts-and-statistics" target="_blank" rel="noopener">FARE</a> &middot; <a href="https://www.foodallergy.org/media-room/fare-releases-national-indicator-report-food-allergy" target="_blank" rel="noopener">FARE National Indicator Report</a> &middot; <a href="https://www.cdc.gov/mmwr/volumes/66/wr/mm6615a2.htm" target="_blank" rel="noopener">CDC (MMWR)</a></p>
+    </div>
+  </div>
+
   <div class="main-content">
     <div class="filter-row">
       <span>Filter:</span>
@@ -442,6 +543,16 @@
       <p><a href="https://www.njleg.state.nj.us/bill-search/2026/S3394" target="_blank" rel="noopener">Read the bill &rarr;</a></p>
     </div>
 
+    <h3>Coming soon: the Transparency Score</h3>
+    <div class="score-preview">
+      <span class="score-tag">In development</span>
+      <p>Right now, AllergyLocate answers one question: does a restaurant publish allergen info at all? The Transparency Score will go a level deeper, rating <em>how good</em> that disclosure actually is.</p>
+      <div class="score-bar-demo">
+        <span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span>
+      </div>
+      <p>Planned factors: whether info covers all 9 major allergens or just some, how recently it was updated, whether it's item-level or a generic disclaimer, and whether cross-contact is addressed. A chain with a detailed, current PDF should score differently than one with a single vague sentence — even though today, both just show up as "has a link."</p>
+    </div>
+
     <h3>The 9 major food allergens (US)</h3>
     <p>Per the <a href="https://www.fda.gov/food/nutrition-food-labeling-and-critical-foods/food-allergies" target="_blank" rel="noopener">FDA</a>: milk, eggs, fish, shellfish, tree nuts, peanuts, wheat, soybeans, and sesame. Restaurants in this database publish information about some or all of these. Most disclosures are at the category level — for example, "tree nuts" rather than specific nuts like hazelnut or almond. Always confirm your specific allergen with the restaurant directly.</p>
 
@@ -456,6 +567,13 @@
 
     <div class="legal-box">
       <strong>Legal notice:</strong> AllergyLocate is an independent informational directory. We do not reproduce allergen charts, menus, or restaurant content — we link to publicly available sources. All restaurant names are used for identification purposes only. AllergyLocate is not affiliated with, endorsed by, or sponsored by any restaurant listed. Information on this site is collected from publicly available sources and user submissions and is provided for reference only.
+    </div>
+
+    <div class="join-callout">
+      <h3>Join the AllergyLocate team</h3>
+      <p>This is a volunteer-built project, and it's growing faster than one person can verify. We're looking for help with restaurant research and link verification, front-end development, and outreach to restaurants and advocacy groups.</p>
+      <p>No food-allergy background required — just care about getting it right.</p>
+      <a class="btn-green" href="mailto:join@allergylocate.org">Get involved &rarr;</a>
     </div>
 
     <h3>Contact / corrections</h3>

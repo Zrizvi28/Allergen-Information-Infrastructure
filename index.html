@@ -16,6 +16,14 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap');
 
+    @font-face {
+      font-family: 'Fraunces Variable';
+      font-style: normal;
+      font-display: swap;
+      font-weight: 100 900;
+      src: url('fraunces-variable.woff2') format('woff2-variations');
+    }
+
     :root {
       --paper: #FAFAF6;
       --paper-dim: #F2F0E8;
@@ -32,13 +40,17 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    .display, .site-name, .hero h1, .about-inner h2, .about-inner h3, .page-inner h2 {
+      font-variation-settings: "SOFT" 0, "WONK" 0;
+    }
+
     body {
       font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--paper);
       color: var(--ink);
     }
 
-    .display { font-family: 'Fraunces', Georgia, serif; }
+    .display { font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif; }
 
     nav {
       background: var(--paper);
@@ -53,7 +65,7 @@
     }
 
     .site-name {
-      font-family: 'Fraunces', Georgia, serif;
+      font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
       font-size: 19px;
       font-weight: 600;
       color: var(--ink);
@@ -121,7 +133,10 @@
     }
 
     .hero h1 {
-      font-family: 'Fraunces', Georgia, serif;
+      font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+      font-variant-ligatures: none;
+      -webkit-font-feature-settings: "liga" 0, "dlig" 0;
+      font-feature-settings: "liga" 0, "dlig" 0;
       font-size: 40px;
       font-weight: 600;
       line-height: 1.15;
@@ -172,7 +187,7 @@
     }
     .why-inner { width: 90%; max-width: 1200px; margin: 0 auto; padding: 0 28px; }
     .why-inner h2 {
-      font-family: 'Fraunces', Georgia, serif;
+      font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
       font-size: 15px;
       font-weight: 600;
       text-transform: uppercase;
@@ -183,7 +198,7 @@
     .why-grid { display: flex; flex-wrap: wrap; gap: 36px; }
     .why-stat { flex: 1 1 200px; min-width: 180px; }
     .why-stat .num {
-      font-family: 'Fraunces', Georgia, serif;
+      font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
       font-size: 34px;
       font-weight: 600;
       color: var(--green);
@@ -317,7 +332,7 @@
 
     /* SUBMIT */
     .page-inner { width: 90%; max-width: 820px; margin: 0 auto; padding: 56px 28px 72px; }
-    .page-inner h2 { font-family: 'Fraunces', Georgia, serif; font-size: 26px; font-weight: 600; margin-bottom: 8px; }
+    .page-inner h2 { font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif; font-size: 26px; font-weight: 600; margin-bottom: 8px; }
     .page-inner .subtitle { font-size: 14px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 32px; }
 
     .form-box { padding: 0; }
@@ -378,8 +393,8 @@
 
     /* ABOUT */
     .about-inner { width: 90%; max-width: 900px; margin: 0 auto; padding: 56px 28px 72px; }
-    .about-inner h2 { font-family: 'Fraunces', Georgia, serif; font-size: 26px; font-weight: 600; margin-bottom: 20px; }
-    .about-inner h3 { font-family: 'Fraunces', Georgia, serif; font-size: 17px; font-weight: 600; margin: 30px 0 10px; }
+    .about-inner h2 { font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif; font-size: 26px; font-weight: 600; margin-bottom: 20px; }
+    .about-inner h3 { font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif; font-size: 17px; font-weight: 600; margin: 30px 0 10px; }
     .about-inner p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 12px; }
     .about-inner a { color: var(--green); }
     .about-inner ul { font-size: 14.5px; color: var(--ink-soft); line-height: 1.75; margin: 10px 0 12px 20px; }
@@ -472,7 +487,7 @@
           <p>ER visits happen each year in the US for food allergy reactions.</p>
         </div>
         <div class="why-stat">
-          <span class="num">50%+</span>
+          <span class="num">Up to 50%</span>
           <p>Of fatal food allergy reactions happen in restaurants or other food-service establishments — exactly where published allergen info matters most.</p>
         </div>
         <div class="why-stat">
@@ -560,7 +575,7 @@
       <div class="score-bar-demo">
         <span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span>
       </div>
-      <p>Planned factors: format of information (PDF, interactive tool, etc), accessibility (how easy was it to find?), navigation (is it a ginormous, difficult to read matrix?), currency (when was it last updated?), and awareness (cross-contact acknowledgement, inclusion of major food allergens, etc). A searchable database of allergen information can inform restaurant allergen policy analysis across regions, types of establishments, and price points."</p>
+      <p>Planned factors: whether info covers all 9 major allergens or just some, how recently it was updated, whether it's item-level or a generic disclaimer, and whether cross-contact is addressed. A chain with a detailed, current PDF should score differently than one with a single vague sentence — even though today, both just show up as "has a link."</p>
     </div>
 
     <h3>The 9 major food allergens (US)</h3>
@@ -581,8 +596,8 @@
 
     <div class="join-callout">
       <h3>Join the AllergyLocate team</h3>
-      <p>This is a volunteer-built project, and it's growing faster than one person can verify. We're looking for help with research, outreach, and front-end development. If you're interested in public health and want to join a project investigating real-world application, we'd love to have you.</p>
-      <p>No food-allergy background required, just willingness to help make managing them a bit easier.</p>
+      <p>This is a volunteer-built project, and it's growing faster than one person can verify. We're looking for help with restaurant research and link verification, and front-end development. If you're interested in public health and want to join a project investigating real-world application, we'd love to have you.</p>
+      <p>No food-allergy background required — just care about getting it right.</p>
       <a class="btn-green" href="mailto:join@allergylocate.org">Get involved &rarr;</a>
     </div>
 
@@ -803,6 +818,7 @@ async function submitForm() {
     alert('Network error. Email issue@allergylocate.org with the restaurant info.');
   }
 }
+
 
 
 document.addEventListener('DOMContentLoaded', function() {

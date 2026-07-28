@@ -11,6 +11,8 @@
 <meta property="og:url" content="https://allergylocate.org">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://allergylocate.org">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap');
 
@@ -57,7 +59,12 @@
       color: var(--ink);
       cursor: pointer;
       letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 9px;
     }
+
+    .site-mark { width: 26px; height: 26px; flex-shrink: 0; object-fit: contain; }
 
     .nav-links { display: flex; gap: 2px; align-items: center; }
 
@@ -420,7 +427,10 @@
 <body>
 
 <nav>
-  <div class="site-name" onclick="showPage('home')">AllergyLocate</div>
+  <div class="site-name" onclick="showPage('home')">
+    <img class="site-mark" src="favicon.png" alt="AllergyLocate logo">
+    AllergyLocate
+  </div>
   <div class="nav-links">
     <button onclick="showPage('home')">Search</button>
     <button onclick="showPage('submit')">Submit</button>
@@ -793,7 +803,6 @@ async function submitForm() {
     alert('Network error. Email issue@allergylocate.org with the restaurant info.');
   }
 }
-
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('search-input').addEventListener('input', function() {

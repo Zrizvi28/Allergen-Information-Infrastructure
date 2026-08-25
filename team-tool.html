@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AllergyLocate — Team Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700&family=Public+Sans:wght@400;500;600;700&display=swap');
+
+  :root {
+    --paper: #FAFAF6;
+    --paper-dim: #F2F0E8;
+    --ink: #22201C;
+    --ink-soft: #5B5750;
+    --ink-faint: #8C877D;
+    --green: #1F4D3A;
+    --green-tint: #E7ECE4;
+    --amber: #8A5A0B;
+    --amber-tint: #F7EEDD;
+    --line: #DEDACE;
+    --line-strong: #C9C3B4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Public Sans', sans-serif; background: var(--paper); color: var(--ink); }
+
+  header {
+    background: var(--green);
+    color: var(--paper);
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  header h1 { font-family: 'Lora', serif; font-size: 19px; font-weight: 600; }
+  .points-pill {
+    background: rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 80px; }
+
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
+  .tab {
+    padding: 10px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+    font-family: inherit;
+  }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 11.5px; font-weight: 600; color: var(--ink-soft); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .field input[type=text], .field input[type=url], .field input[type=date], .field select {
+    width: 100%; padding: 9px 10px; border: 1px solid var(--line-strong); border-radius: 6px;
+    font-size: 14px; font-family: inherit; background: var(--paper);
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .checkbox-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
+  .checkbox-grid label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink); text-transform: none; font-weight: 400; }
+
+  fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-bottom: 18px; }
+  legend { font-family: 'Lora', serif; font-weight: 600; font-size: 14px; padding: 0 6px; color: var(--green); }
+
+  .score-preview {
+    background: var(--green-tint); border: 1px solid var(--green);
+    border-radius: 8px; padding: 16px; margin-bottom: 18px;
+  }
+  .score-preview .big { font-family: 'Lora', serif; font-size: 32px; font-weight: 700; color: var(--green); }
+  .score-preview .breakdown { font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; line-height: 1.7; }
+
+  .btn { background: var(--green); color: var(--paper); border: none; padding: 12px 22px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn:hover { background: #163c2c; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .status-msg { margin-top: 14px; font-size: 13.5px; padding: 10px 12px; border-radius: 6px; display: none; }
+  .status-msg.success { background: var(--green-tint); color: var(--green); display: block; }
+  .status-msg.error { background: var(--amber-tint); color: var(--amber); display: block; }
+
+  .search-box input { width: 100%; padding: 11px 14px; border: 1px solid var(--line-strong); border-radius: 6px; font-size: 14px; margin-bottom: 16px; }
+  .result-row { padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 13.5px; }
+  .result-row .status { color: var(--ink-faint); font-size: 12px; }
+
+  .leaderboard-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .leaderboard-row .rank { color: var(--amber); font-weight: 700; width: 24px; }
+  .leaderboard-row .pts { font-weight: 600; color: var(--green); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AllergyLocate — Team Tool</h1>
+  <div class="points-pill" id="points-display">Loading points...</div>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab active" data-tab="submit">Submit a Restaurant</button>
+    <button class="tab" data-tab="search">Check Existing</button>
+    <button class="tab" data-tab="leaderboard">Leaderboard</button>
+  </div>
+
+  <!-- SUBMIT PANEL -->
+  <div class="panel active" id="panel-submit">
+    <div class="field">
+      <label>Your Name (for point tracking)</label>
+      <input type="text" id="team-name" placeholder="e.g. Alex">
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Restaurant Name *</label>
+        <input type="text" id="r-name" placeholder="e.g. Shake Shack">
+      </div>
+      <div class="field">
+        <label>Source URL *</label>
+        <input type="url" id="r-url" placeholder="https://...">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Chain or Independent?</label>
+        <select id="r-type">
+          <option value="chain">Chain</option>
+          <option value="independent">Independent</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>NYC Location?</label>
+        <select id="r-nyc">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+      </div>
+    </div>
+
+    <fieldset>
+      <legend>Completeness</legend>
+      <label style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; font-weight:600;">Allergens Covered</label>
+      <div class="checkbox-grid" id="allergen-checks">
+        <label><input type="checkbox" value="milk"> Milk</label>
+        <label><input type="checkbox" value="eggs"> Eggs</label>
+        <label><input type="checkbox" value="fish"> Fish</label>
+        <label><input type="checkbox" value="shellfish"> Shellfish</label>
+        <label><input type="checkbox" value="tree_nuts"> Tree Nuts</label>
+        <label><input type="checkbox" value="peanuts"> Peanuts</label>
+        <label><input type="checkbox" value="wheat"> Wheat</label>
+        <label><input type="checkbox" value="soybeans"> Soybeans</label>
+        <label><input type="checkbox" value="sesame"> Sesame</label>
+      </div>
+      <div class="field" style="margin-top:10px;">
+        <label>Specificity Level</label>
+        <select id="specificity">
+          <option value="item_level">Item-level (per menu item)</option>
+          <option value="category_level">Category-level (one general list)</option>
+          <option value="blanket_statement">Blanket statement ("ask your server")</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Accessibility &amp; Format</legend>
+      <div class="row2">
+        <div class="field">
+          <label>Clicks from Homepage</label>
+          <input type="text" id="clicks" placeholder="e.g. 2">
+        </div>
+        <div class="field">
+          <label>Clearly Labeled?</label>
+          <select id="labeled"><option value="true">Yes</option><option value="false">No</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Format</label>
+          <select id="format">
+            <option value="searchable_tool">Searchable tool</option>
+            <option value="organized_pdf">Organized PDF</option>
+            <option value="unorganized_pdf">Unorganized PDF</option>
+            <option value="plain_text">Plain text</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Page Count (if PDF)</label>
+          <input type="text" id="page-count" placeholder="e.g. 6">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Currency &amp; Cross-Contact</legend>
+      <div class="field">
+        <label>Last Updated Date (if shown)</label>
+        <input type="date" id="last-updated">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Mentions Cross-Contact?</label>
+          <select id="cross-contact"><option value="false">No</option><option value="true">Yes</option></select>
+        </div>
+        <div class="field">
+          <label>Mentions Shared Equipment?</label>
+          <select id="shared-equip"><option value="false">No</option><option value="true">Yes</option></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Evidence Quotes (copy exact text you're basing this on)</label>
+        <input type="text" id="evidence" placeholder="e.g. &quot;Contains milk, eggs, wheat, soy&quot;">
+      </div>
+    </fieldset>
+
+    <div class="score-preview" id="score-preview" style="display:none;">
+      <div class="big" id="score-total">--/100</div>
+      <div class="breakdown" id="score-breakdown"></div>
+    </div>
+
+    <button class="btn" id="submit-btn">Submit for Review</button>
+    <div class="status-msg" id="status-msg"></div>
+  </div>
+
+  <!-- SEARCH PANEL -->
+  <div class="panel" id="panel-search">
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Type a restaurant name to check if it's already done...">
+    </div>
+    <div id="search-results"></div>
+  </div>
+
+  <!-- LEADERBOARD PANEL -->
+  <div class="panel" id="panel-leaderboard">
+    <div id="leaderboard-list">Loading...</div>
+  </div>
+</div>
+
+<script>
+  const TEAM_TOOL_URL = 'https://script.google.com/macros/s/AKfycbzxuNyfZPVy0GxyptBbvExCHuCEkKHEPqfsf0dMoK6c7U9SDVhbKynjgb8MS-9glBQZ/exec';
+
+  // ---- Tab switching ----
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach((p) => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      if (tab.dataset.tab === 'leaderboard') loadLeaderboard();
+    });
+  });
+
+  // ---- Live scoring (same logic as the backend, mirrored so team members see the score before submitting) ----
+  const MAJOR_ALLERGENS = ['milk','eggs','fish','shellfish','tree_nuts','peanuts','wheat','soybeans','sesame'];
+  const WEIGHTS = { completeness: 30, accessibility: 25, currency: 15, format: 15, crossContact: 15 };
+
+  function computeScore() {
+    const allergens = Array.from(document.querySelectorAll('#allergen-checks input:checked')).map(c => c.value);
+    const specificity = document.getElementById('specificity').value;
+    const clicks = parseInt(document.getElementById('clicks').value) || 1;
+    const labeled = document.getElementById('labeled').value === 'true';
+    const format = document.getElementById('format').value;
+    const pageCount = parseInt(document.getElementById('page-count').value) || null;
+    const lastUpdated = document.getElementById('last-updated').value;
+    const crossContact = document.getElementById('cross-contact').value === 'true';
+    const sharedEquip = document.getElementById('shared-equip').value === 'true';
+
+    const ratio = allergens.length / MAJOR_ALLERGENS.length;
+    const multiplier = { item_level: 1.0, category_level: 0.75, blanket_statement: 0.3 }[specificity] || 0.3;
+    const completenessScore = Math.round(WEIGHTS.completeness * ratio * multiplier);
+
+    let accessScore = WEIGHTS.accessibility - Math.min(13, Math.max(0, (clicks - 1) * 4));
+    if (!labeled) accessScore -= 8;
+    accessScore = Math.max(0, accessScore);
+
+    let currencyScore = 0;
+    let currencyReason = 'No update date found';
+    if (lastUpdated) {
+      const months = Math.round((new Date() - new Date(lastUpdated)) / (1000*60*60*24*30.44));
+      if (months <= 6) currencyScore = WEIGHTS.currency;
+      else if (months <= 12) currencyScore = 11;
+      else if (months <= 24) currencyScore = 6;
+      else currencyScore = 1;
+      currencyReason = `~${months} months old`;
+    }
+
+    const formatScores = { searchable_tool: 15, organized_pdf: 10, unorganized_pdf: 4, plain_text: 6 };
+    let formatScore = formatScores[format] || 4;
+    if (format === 'unorganized_pdf' && pageCount > 15) formatScore = Math.max(0, formatScore - 2);
+
+    let ccScore = 0;
+    if (crossContact) ccScore += 9;
+    if (sharedEquip) ccScore += 6;
+
+    const total = completenessScore + accessScore + currencyScore + formatScore + ccScore;
+
+    document.getElementById('score-preview').style.display = 'block';
+    document.getElementById('score-total').textContent = total + '/100';
+    document.getElementById('score-breakdown').innerHTML = `
+      Completeness: ${completenessScore}/30 (${allergens.length}/9 allergens, ${specificity})<br>
+      Accessibility: ${accessScore}/25<br>
+      Currency: ${currencyScore}/15 (${currencyReason})<br>
+      Format: ${formatScore}/15<br>
+      Cross-Contact: ${ccScore}/15
+    `;
+
+    return { allergens, specificity, clicks, labeled, format, pageCount, lastUpdated, crossContact, sharedEquip, total };
+  }
+
+  document.querySelectorAll('#panel-submit input, #panel-submit select').forEach((el) => {
+    el.addEventListener('input', computeScore);
+    el.addEventListener('change', computeScore);
+  });
+
+  // ---- Submission ----
+  document.getElementById('submit-btn').addEventListener('click', async () => {
+    const name = document.getElementById('team-name').value.trim();
+    const rName = document.getElementById('r-name').value.trim();
+    const rUrl = document.getElementById('r-url').value.trim();
+    const statusEl = document.getElementById('status-msg');
+
+    if (!name || !rName || !rUrl) {
+      statusEl.className = 'status-msg error';
+      statusEl.textContent = 'Please fill in your name, restaurant name, and source URL.';
+      return;
+    }
+
+    const scored = computeScore();
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const payload = {
+      restaurant_name: rName,
+      source_url: rUrl,
+      restaurant_type: document.getElementById('r-type').value,
+      is_nyc: document.getElementById('r-nyc').value === 'true',
+      submitted_by: name,
+      allergens_covered: scored.allergens,
+      specificity_level: scored.specificity,
+      clicks_from_homepage: scored.clicks,
+      labeled_clearly: scored.labeled,
+      url_type: 'official_site',
+      format: scored.format,
+      page_count: scored.pageCount,
+      last_updated_date: scored.lastUpdated || null,
+      mentions_cross_contact: scored.crossContact,
+      mentions_shared_equipment: scored.sharedEquip,
+      evidence_quotes: document.getElementById('evidence').value.trim()
+    };
+
+    try {
+      if (TEAM_TOOL_URL.includes('PASTE_YOUR')) {
+        throw new Error('Backend URL not configured yet — see the comment at the top of the script.');
+      }
+      const res = await fetch(TEAM_TOOL_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      statusEl.className = 'status-msg success';
+      statusEl.textContent = `Submitted! Score: ${data.score}/100. It'll show as "Needs Review" until approved.`;
+      updatePointsDisplay(name);
+    } catch (err) {
+      statusEl.className = 'status-msg error';
+      statusEl.textContent = 'Error: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Submit for Review';
+    }
+  });
+
+  // ---- Search ----
+  let searchTimeout;
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => runSearch(e.target.value), 300);
+  });
+
+  async function runSearch(query) {
+    const resultsEl = document.getElementById('search-results');
+    if (!query.trim() || TEAM_TOOL_URL.includes('PASTE_YOUR')) {
+      resultsEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Backend not connected yet.</p>';
+      return;
+    }
+    try {
+      const res = await fetch(`${TEAM_TOOL_URL}?action=search&q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      resultsEl.innerHTML = data.results.length
+        ? data.results.map(r => `<div class="result-row"><span>${r.name}</span><span class="status">${r.status} · ${r.score}/100</span></div>`).join('')
+        : '<p style="color:var(--ink-faint); font-size:13px;">No matches — this one might not be done yet!</p>';
+    } catch (err) {
+      resultsEl.innerHTML = '<p style="color:var(--amber); font-size:13px;">Search error: ' + err.message + '</p>';
+    }
+  }
+
+  // ---- Leaderboard ----
+  async function loadLeaderboard() {
+    const el = document.getElementById('leaderboard-list');
+    if (TEAM_TOOL_URL.includes('PASTE_YOUR')) {
+      el.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Backend not connected yet.</p>';
+      return;
+    }
+    try {
+      const res = await fetch(`${TEAM_TOOL_URL}?action=leaderboard`);
+      const data = await res.json();
+      el.innerHTML = data.team.map((w, i) =>
+        `<div class="leaderboard-row"><span><span class="rank">#${i+1}</span> ${w.name}</span><span class="pts">${w.points} pts</span></div>`
+      ).join('') || '<p style="color:var(--ink-faint); font-size:13px;">No submissions yet — be the first!</p>';
+    } catch (err) {
+      el.innerHTML = '<p style="color:var(--amber); font-size:13px;">Couldn\'t load leaderboard.</p>';
+    }
+  }
+
+  async function updatePointsDisplay(name) {
+    if (TEAM_TOOL_URL.includes('PASTE_YOUR')) return;
+    try {
+      const res = await fetch(`${TEAM_TOOL_URL}?action=leaderboard`);
+      const data = await res.json();
+      const me = data.team.find(w => w.name === name);
+      document.getElementById('points-display').textContent = me ? `${me.points} points` : '0 points';
+    } catch (err) { /* silent fail, non-critical */ }
+  }
+
+  document.getElementById('points-display').textContent = 'Enter your name to see points';
+</script>
+
+</body>
+</html>

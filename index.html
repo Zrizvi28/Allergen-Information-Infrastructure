@@ -296,6 +296,17 @@
     .row-checked { font-size: 11.5px; color: var(--ink-faint); }
     .row-checked .stamp { color: var(--amber); font-weight: 600; }
 
+    .score-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--amber);
+      background: var(--amber-tint);
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
     .allergen-btn {
       display: inline-flex;
       align-items: center;
@@ -731,6 +742,10 @@ function renderGrid() {
     return matchSearch && matchFilter;
   });
 
+  results.sort(function(a, b) {
+    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+  });
+
   var grid = document.getElementById('restaurant-grid');
   var empty = document.getElementById('empty-state');
   var count = document.getElementById('results-count');
@@ -757,6 +772,7 @@ function renderGrid() {
     html += '<div class="row-main">';
     html += '<div class="row-name-line"><span class="row-name">' + r.name + '</span>';
     if (r.nyc) html += '<span class="nyc-tag">NYC</span>';
+    if (typeof r.score === 'number') html += '<span class="score-badge">' + r.score + '/100</span>';
     html += '</div>';
     if (r.checked) html += '<div class="row-checked">Last checked <span class="stamp">' + r.checked + '</span></div>';
     html += '</div>';

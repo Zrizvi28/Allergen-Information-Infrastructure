@@ -599,6 +599,8 @@
 </footer>
 
 <script>
+var TEAM_TOOL_URL = 'https://script.google.com/macros/s/AKfycbzxuNyfZPVy0GxyptBbvExCHuCEkKHEPqfsf0dMoK6c7U9SDVhbKynjgb8MS-9glBQZ/exec';
+
 var RESTAURANTS = [
   {name:"In-N-Out Burger",url:"https://www.in-n-out.com/docs/default-source/downloads/in-n-out_allergen_info.pdf",type:"chain",nyc:false,checked:"July 2026"},
   {name:"Boqueria",url:"https://boqueriarestaurant.com/allergy-charts/",type:"independent",nyc:true,checked:"July 2026"},
@@ -667,7 +669,7 @@ var RESTAURANTS = [
   {name:"CAVA",url:"https://assets.ctfassets.net/kugm9fp9ib18/7KrOGNUFZjBddOWezWLWwm/f9cf7abd2116fa4fce16875139347395/CAVA-REC-GID-1225-NutriAllergReg.pdf",type:"chain",nyc:false,checked:"July 2026"},
   {name:"Olive Garden",url:"https://media.olivegarden.com/en_us/pdf/allergen_guide.pdf",type:"chain",nyc:false,checked:"July 2026"},
   {name:"The Halal Guys",url:"https://thehalalguys.com/nutritional-guide/",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Shake Shack",url:"https://shakeshack.com/sites/default/files/2026-01/_Master%20Nut%20%26%20Allergen%201.6.26.pdf",type:"chain",nyc:true,checked:"July 2026"},
+  {name:"Shake Shack",url:"https://shakeshack.widen.net/view/pdf/f0ckdbaukl/_Master-Nut--Allergen-1.6.26.pdf?u=e37zm5",type:"chain",nyc:true,checked:"July 2026"},
   {name:"P.F. Chang's",url:"https://www.pfchangs.com/nutrition/allergens-to-go",type:"chain",nyc:false,checked:"July 2026"},
   {name:"Red Lobster",url:"https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Allergen_Final_Guide_6-29-26.pdf",type:"chain",nyc:false,checked:"July 2026"},
   {name:"Cold Stone Creamery",url:"https://www.coldstonecreamery.com/nutrition/pdf/CSC_Food%20Allergies%20and%20Sensitivities.pdf",type:"chain",nyc:false,checked:"July 2026"},
@@ -766,6 +768,41 @@ function renderGrid() {
   grid.innerHTML = html;
 }
 
+async function syncLiveRestaurants() {
+  try {
+    var res = await fetch(TEAM_TOOL_URL + '?action=live');
+    var data = await res.json();
+    if (!data.restaurants) return;
+
+    data.restaurants.forEach(function(live) {
+      var existing = RESTAURANTS.find(function(r) {
+        return r.name.toLowerCase() === live.name.toLowerCase();
+      });
+      if (existing) {
+        existing.url = live.url;
+        existing.type = live.type;
+        existing.nyc = live.nyc;
+        existing.checked = live.checked;
+        existing.score = live.score;
+      } else {
+        RESTAURANTS.push({
+          name: live.name,
+          url: live.url,
+          type: live.type,
+          nyc: live.nyc,
+          checked: live.checked,
+          score: live.score
+        });
+      }
+    });
+
+    document.getElementById('stat-count').textContent = RESTAURANTS.length;
+    renderGrid();
+  } catch (err) {
+    console.warn('Could not sync live restaurant data (site still works fine with existing data):', err.message);
+  }
+}
+
 async function submitForm() {
   var name = document.getElementById('f-name').value.trim();
   var url = document.getElementById('f-url').value.trim();
@@ -811,6 +848,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   document.getElementById('stat-count').textContent = RESTAURANTS.length;
   renderGrid();
+  syncLiveRestaurants();
 });
 </script>
 

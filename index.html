@@ -307,6 +307,19 @@
       flex-shrink: 0;
     }
 
+    .format-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--green);
+      background: var(--green-tint);
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
     .allergen-btn {
       display: inline-flex;
       align-items: center;
@@ -772,7 +785,8 @@ function renderGrid() {
     html += '<div class="row-main">';
     html += '<div class="row-name-line"><span class="row-name">' + r.name + '</span>';
     if (r.nyc) html += '<span class="nyc-tag">NYC</span>';
-    if (typeof r.score === 'number') html += '<span class="score-badge">' + r.score + '/100</span>';
+    if (typeof r.score === 'number') html += '<span class="score-badge">Transparency Score: ' + r.score + '/100</span>';
+    if (r.docFormat) html += '<span class="format-label">' + r.docFormat + '</span>';
     html += '</div>';
     if (r.checked) html += '<div class="row-checked">Last checked <span class="stamp">' + r.checked + '</span></div>';
     html += '</div>';
@@ -800,6 +814,7 @@ async function syncLiveRestaurants() {
         existing.nyc = live.nyc;
         existing.checked = live.checked;
         existing.score = live.score;
+        existing.docFormat = live.format;
       } else {
         RESTAURANTS.push({
           name: live.name,
@@ -807,7 +822,8 @@ async function syncLiveRestaurants() {
           type: live.type,
           nyc: live.nyc,
           checked: live.checked,
-          score: live.score
+          score: live.score,
+          docFormat: live.format
         });
       }
     });

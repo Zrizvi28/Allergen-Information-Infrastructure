@@ -1,902 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>AllergyLocate - Restaurant Allergen Information Database</title>
-<meta name="description" content="AllergyLocate (Allergy Locate) is a free, searchable database of allergen information from 95 US restaurants. Find allergen PDFs, menus, and disclosure pages from chains and independent restaurants.">
-<meta name="keywords" content="restaurant allergen information, food allergy restaurant, allergen menu, peanut allergy restaurant, tree nut allergy, gluten free restaurant, food allergy database">
-<meta property="og:title" content="AllergyLocate - Restaurant Allergen Information">
-<meta property="og:description" content="AllergyLocate (Allergy Locate) is a free database of verified allergen disclosures from 95 US restaurants. Search by name, filter by type, and link directly to official allergen info.">
-<meta property="og:url" content="https://allergylocate.org">
-<meta property="og:type" content="website">
-<link rel="canonical" href="https://allergylocate.org">
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,600&family=Public+Sans:wght@400;500;600;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AllergyLocate — Team Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700&family=Public+Sans:wght@400;500;600;700&display=swap');
 
-    :root {
-      --paper: #FAFAF6;
-      --paper-dim: #F2F0E8;
-      --ink: #22201C;
-      --ink-soft: #5B5750;
-      --ink-faint: #8C877D;
-      --green: #1F4D3A;
-      --green-tint: #E7ECE4;
-      --amber: #8A5A0B;
-      --amber-tint: #F7EEDD;
-      --line: #DEDACE;
-      --line-strong: #C9C3B4;
-    }
+  :root {
+    --paper: #FAFAF6;
+    --paper-dim: #F2F0E8;
+    --ink: #22201C;
+    --ink-soft: #5B5750;
+    --ink-faint: #8C877D;
+    --green: #1F4D3A;
+    --green-tint: #E7ECE4;
+    --amber: #8A5A0B;
+    --amber-tint: #F7EEDD;
+    --line: #DEDACE;
+    --line-strong: #C9C3B4;
+  }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Public Sans', sans-serif; background: var(--paper); color: var(--ink); }
 
-    body {
-      font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--paper);
-      color: var(--ink);
-    }
+  header {
+    background: var(--green);
+    color: var(--paper);
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  header h1 { font-family: 'Lora', serif; font-size: 19px; font-weight: 600; }
+  .points-pill {
+    background: rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
 
-    .display { font-family: 'Lora', Georgia, serif; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 80px; }
 
-    nav {
-      background: var(--paper);
-      border-bottom: 1px solid var(--line);
-      padding: 18px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
+  .tab {
+    padding: 10px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+    font-family: inherit;
+  }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .panel { display: none; }
+  .panel.active { display: block; }
 
-    .site-name {
-      font-family: 'Lora', Georgia, serif;
-      font-size: 19px;
-      font-weight: 600;
-      color: var(--ink);
-      cursor: pointer;
-      letter-spacing: -0.01em;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 11.5px; font-weight: 600; color: var(--ink-soft); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .field input[type=text], .field input[type=url], .field input[type=date], .field select {
+    width: 100%; padding: 9px 10px; border: 1px solid var(--line-strong); border-radius: 6px;
+    font-size: 14px; font-family: inherit; background: var(--paper);
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .checkbox-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
+  .checkbox-grid label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink); text-transform: none; font-weight: 400; }
 
-    .site-mark { width: 26px; height: 26px; flex-shrink: 0; object-fit: contain; }
+  fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-bottom: 18px; }
+  legend { font-family: 'Lora', serif; font-weight: 600; font-size: 14px; padding: 0 6px; color: var(--green); }
 
-    .nav-links { display: flex; gap: 2px; align-items: center; }
+  .score-preview {
+    background: var(--green-tint); border: 1px solid var(--green);
+    border-radius: 8px; padding: 16px; margin-bottom: 18px;
+  }
+  .score-preview .big { font-family: 'Lora', serif; font-size: 32px; font-weight: 700; color: var(--green); }
+  .score-preview .breakdown { font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; line-height: 1.7; }
 
-    .nav-links button {
-      background: none;
-      border: none;
-      padding: 7px 14px;
-      font-size: 13px;
-      color: var(--ink-soft);
-      cursor: pointer;
-      font-family: inherit;
-      letter-spacing: 0.01em;
-    }
+  .btn { background: var(--green); color: var(--paper); border: none; padding: 12px 22px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn:hover { background: #163c2c; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .nav-links button:hover { color: var(--ink); }
+  .status-msg { margin-top: 14px; font-size: 13.5px; padding: 10px 12px; border-radius: 6px; display: none; }
+  .status-msg.success { background: var(--green-tint); color: var(--green); display: block; }
+  .status-msg.error { background: var(--amber-tint); color: var(--amber); display: block; }
 
-    .nav-links .coming-soon {
-      cursor: default;
-      color: var(--ink-soft);
-      opacity: 0.55;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+  .search-box input { width: 100%; padding: 11px 14px; border: 1px solid var(--line-strong); border-radius: 6px; font-size: 14px; margin-bottom: 16px; }
+  .result-row { padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 13.5px; }
+  .result-row .status { color: var(--ink-faint); font-size: 12px; }
 
-    .nav-links .coming-soon:hover { color: var(--ink-soft); }
-
-    .nav-links .coming-soon .badge-soon {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-
-    .page { display: none; }
-    .page.active { display: block; }
-
-    .disclaimer-bar {
-      background: var(--paper-dim);
-      border-bottom: 1px solid var(--line);
-      padding: 9px 20px;
-      font-size: 12px;
-      color: var(--ink-soft);
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    /* HOME */
-    .hero {
-      text-align: left;
-      padding: 72px 28px 36px;
-      width: 90%;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .hero h1 {
-      font-family: 'Lora', Georgia, serif;
-      font-size: 40px;
-      font-weight: 600;
-      line-height: 1.15;
-      margin-bottom: 16px;
-      color: var(--ink);
-      letter-spacing: -0.015em;
-    }
-    .hero h1 em { color: var(--green); font-style: normal; }
-    .hero p { font-size: 15.5px; color: var(--ink-soft); margin-bottom: 32px; line-height: 1.65; max-width: 760px; }
-
-    .search-box { position: relative; max-width: 480px; }
-
-    .search-box input {
-      width: 100%;
-      padding: 12px 16px 12px 40px;
-      font-size: 14.5px;
-      border: none;
-      border-bottom: 1.5px solid var(--line-strong);
-      outline: none;
-      font-family: inherit;
-      background: transparent;
-      color: var(--ink);
-    }
-
-    .search-box input:focus { border-bottom-color: var(--green); }
-    .search-box input::placeholder { color: var(--ink-faint); }
-
-    .search-icon { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: var(--ink-faint); }
-
-    .stats {
-      display: flex;
-      gap: 28px;
-      padding: 22px 0 0;
-      flex-wrap: wrap;
-      max-width: 480px;
-      font-size: 13px;
-      color: var(--ink-soft);
-    }
-    .stats strong { color: var(--green); font-weight: 700; }
-
-    /* WHY IT MATTERS STAT BAND */
-    .why-band {
-      background: var(--paper-dim);
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      padding: 40px 0;
-      margin-top: 8px;
-    }
-    .why-inner { width: 90%; max-width: 1200px; margin: 0 auto; padding: 0 28px; }
-    .why-inner h2 {
-      font-family: 'Lora', Georgia, serif;
-      font-size: 15px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--ink-faint);
-      margin-bottom: 20px;
-    }
-    .why-grid { display: flex; flex-wrap: wrap; gap: 36px; }
-    .why-stat { flex: 1 1 200px; min-width: 180px; }
-    .why-stat .num {
-      font-family: 'Lora', Georgia, serif;
-      font-size: 34px;
-      font-weight: 600;
-      color: var(--green);
-      line-height: 1.1;
-      display: block;
-      margin-bottom: 6px;
-    }
-    .why-stat p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
-    .why-source { font-size: 11.5px; color: var(--ink-faint); margin-top: 22px; }
-    .why-source a { color: var(--ink-faint); text-decoration: underline; }
-
-    /* TRANSPARENCY SCORE PREVIEW */
-    .score-preview {
-      border: 1px solid var(--line-strong);
-      border-radius: 10px;
-      padding: 20px 22px;
-      margin: 14px 0 24px;
-      background: var(--amber-tint);
-    }
-    .score-preview .score-tag {
-      display: inline-block;
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--amber);
-      background: rgba(138, 90, 11, 0.12);
-      padding: 3px 9px;
-      border-radius: 20px;
-      margin-bottom: 10px;
-    }
-    .score-preview p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 10px; }
-    .score-preview p:last-child { margin-bottom: 0; }
-    .score-bar-demo { display: flex; gap: 6px; margin: 12px 0 14px; }
-    .score-bar-demo span {
-      flex: 1;
-      height: 6px;
-      border-radius: 3px;
-      background: var(--line-strong);
-    }
-    .score-bar-demo span.filled { background: var(--amber); }
-
-    /* JOIN THE TEAM CALLOUT */
-    .join-callout {
-      border: 1px solid var(--green);
-      border-radius: 10px;
-      padding: 22px;
-      margin: 24px 0;
-      background: var(--green-tint);
-    }
-    .join-callout h3 { margin: 0 0 8px !important; }
-    .join-callout p { margin-bottom: 10px; }
-    .join-callout .btn-green { display: inline-block; text-decoration: none; margin-top: 4px; color: var(--paper); }
-
-    .main-content { width: 90%; max-width: 1200px; margin: 0 auto; padding: 8px 28px 72px; }
-
-    .filter-row {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 8px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--line);
-      flex-wrap: wrap;
-    }
-    .filter-row span { font-size: 12px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.05em; }
-
-    .filter-btn {
-      padding: 2px 0;
-      border: none;
-      border-bottom: 1.5px solid transparent;
-      background: none;
-      font-size: 13.5px;
-      color: var(--ink-soft);
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .filter-btn:hover { color: var(--ink); }
-    .filter-btn.active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
-
-    .results-count { font-size: 12.5px; color: var(--ink-faint); margin: 16px 0 4px; }
-
-    #restaurant-grid { display: flex; flex-direction: column; }
-
-    .restaurant-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .row-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-    .row-name-line { display: flex; align-items: baseline; gap: 8px; }
-    .row-name { font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.3; }
-
-    .nyc-tag {
-      font-size: 10px;
-      color: var(--amber);
-      border: 1px solid var(--amber);
-      padding: 1px 6px;
-      white-space: nowrap;
-      flex-shrink: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .row-checked { font-size: 11.5px; color: var(--ink-faint); }
-    .row-checked .stamp { color: var(--amber); font-weight: 600; }
-
-    .score-badge {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--amber);
-      background: var(--amber-tint);
-      padding: 2px 8px;
-      border-radius: 20px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .format-label {
-      font-size: 10.5px;
-      font-weight: 600;
-      color: var(--green);
-      background: var(--green-tint);
-      padding: 2px 8px;
-      border-radius: 20px;
-      white-space: nowrap;
-      flex-shrink: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-    }
-
-    .allergen-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12.5px;
-      color: var(--green);
-      text-decoration: none;
-      padding: 6px 0;
-      white-space: nowrap;
-      flex-shrink: 0;
-      border-bottom: 1px solid transparent;
-    }
-
-    .allergen-btn:hover { border-bottom-color: var(--green); }
-
-    #empty-state { display: none; text-align: center; padding: 64px 20px; color: var(--ink-faint); }
-    #empty-state p { font-size: 14px; margin-top: 10px; }
-    #empty-state a { color: var(--green); }
-
-    /* SUBMIT */
-    .page-inner { width: 90%; max-width: 820px; margin: 0 auto; padding: 56px 28px 72px; }
-    .page-inner h2 { font-family: 'Lora', Georgia, serif; font-size: 26px; font-weight: 600; margin-bottom: 8px; }
-    .page-inner .subtitle { font-size: 14px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 32px; }
-
-    .form-box { padding: 0; }
-
-    .field { margin-bottom: 20px; }
-
-    .field label {
-      display: block;
-      font-size: 11.5px;
-      font-weight: 600;
-      color: var(--ink-soft);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .field input, .field select, .field textarea {
-      width: 100%;
-      padding: 9px 0;
-      border: none;
-      border-bottom: 1px solid var(--line-strong);
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--ink);
-      outline: none;
-      background: transparent;
-    }
-
-    .field input:focus, .field select:focus, .field textarea:focus { border-bottom-color: var(--green); }
-    .field textarea { resize: vertical; min-height: 70px; }
-
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 500px) { .two-col { grid-template-columns: 1fr; } }
-
-    .btn-green {
-      background: var(--green);
-      color: var(--paper);
-      border: none;
-      padding: 11px 24px;
-      font-size: 13.5px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      margin-top: 8px;
-      letter-spacing: 0.01em;
-    }
-
-    .btn-green:hover { background: #163c2c; }
-
-    .success-msg {
-      display: none;
-      border-left: 2px solid var(--green);
-      color: var(--green);
-      padding: 4px 0 4px 14px;
-      font-size: 13px;
-      margin-top: 18px;
-    }
-
-    /* ABOUT */
-    .about-inner { width: 90%; max-width: 900px; margin: 0 auto; padding: 56px 28px 72px; }
-    .about-inner h2 { font-family: 'Lora', Georgia, serif; font-size: 26px; font-weight: 600; margin-bottom: 20px; }
-    .about-inner h3 { font-family: 'Lora', Georgia, serif; font-size: 17px; font-weight: 600; margin: 30px 0 10px; }
-    .about-inner p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 12px; }
-    .about-inner a { color: var(--green); }
-    .about-inner ul { font-size: 14.5px; color: var(--ink-soft); line-height: 1.75; margin: 10px 0 12px 20px; }
-    .about-inner ul li { margin-bottom: 5px; }
-
-    .policy-callout { border-top: 2px solid var(--green); padding-top: 18px; margin: 28px 0; }
-
-    .legal-box {
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      padding: 16px 0;
-      margin: 28px 0;
-      font-size: 12.5px;
-      color: var(--ink-faint);
-      line-height: 1.7;
-    }
-
-    footer {
-      border-top: 1px solid var(--line);
-      padding: 24px 20px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--ink-faint);
-    }
-    footer a { color: var(--green); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
-    .footer-disclaimer {
-      font-size: 11px;
-      color: var(--ink-faint);
-      margin-top: 10px;
-      line-height: 1.6;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 30px; }
-      .hero { padding: 48px 20px 28px; }
-      .stats { gap: 18px; }
-      .restaurant-row { flex-direction: column; align-items: flex-start; gap: 8px; }
-    }
-  </style>
+  .leaderboard-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .leaderboard-row .rank { color: var(--amber); font-weight: 700; width: 24px; }
+  .leaderboard-row .pts { font-weight: 600; color: var(--green); }
+</style>
 </head>
 <body>
 
-<nav>
-  <div class="site-name" onclick="showPage('home')">
-    <img class="site-mark" src="favicon.png" alt="AllergyLocate logo">
-    AllergyLocate
-  </div>
-  <div class="nav-links">
-    <button onclick="showPage('home')">Search</button>
-    <button onclick="showPage('submit')">Submit</button>
-    <button onclick="showPage('about')">About</button>
-    <button class="coming-soon" disabled title="Coming soon">Transparency Dashboard <span class="badge-soon">(coming soon!)</span></button>
-  </div>
-</nav>
+<header>
+  <h1>AllergyLocate — Team Tool</h1>
+  <div class="points-pill" id="points-display">Loading points...</div>
+</header>
 
-<div class="disclaimer-bar">
-  AllergyLocate is not affiliated with, endorsed by, or sponsored by any restaurant listed. Allergen information is collected from publicly available sources and user submissions. Always verify directly with the restaurant before eating.
-</div>
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab active" data-tab="submit">Submit a Restaurant</button>
+    <button class="tab" data-tab="search">Check Existing</button>
+    <button class="tab" data-tab="leaderboard">Leaderboard</button>
+  </div>
 
-<!-- HOME -->
-<div id="page-home" class="page active">
-  <div class="hero">
-    <h1>Find restaurant <em>allergen info</em>, fast.</h1>
-    <p>A free, independent index of publicly available allergen information from restaurants across the US. All links are manually checked and updated. Verify information accuracy with the restaurant before eating. We encourage user submissions!</p>
+  <!-- SUBMIT PANEL -->
+  <div class="panel active" id="panel-submit">
+    <div class="field">
+      <label>Your Name (for point tracking)</label>
+      <input type="text" id="team-name" placeholder="e.g. Alex">
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Restaurant Name *</label>
+        <input type="text" id="r-name" list="known-restaurants" placeholder="e.g. Shake Shack" autocomplete="off">
+        <datalist id="known-restaurants"></datalist>
+      </div>
+      <div class="field">
+        <label>Source URL *</label>
+        <input type="url" id="r-url" placeholder="https://...">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Chain or Independent?</label>
+        <select id="r-type">
+          <option value="chain">Chain</option>
+          <option value="independent">Independent</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>NYC Location?</label>
+        <select id="r-nyc">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+      </div>
+    </div>
+
+    <fieldset>
+      <legend>Completeness</legend>
+      <label style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; font-weight:600;">Allergens Covered</label>
+      <div class="checkbox-grid" id="allergen-checks">
+        <label><input type="checkbox" value="milk"> Milk</label>
+        <label><input type="checkbox" value="eggs"> Eggs</label>
+        <label><input type="checkbox" value="fish"> Fish</label>
+        <label><input type="checkbox" value="shellfish"> Shellfish</label>
+        <label><input type="checkbox" value="tree_nuts"> Tree Nuts</label>
+        <label><input type="checkbox" value="peanuts"> Peanuts</label>
+        <label><input type="checkbox" value="wheat"> Wheat</label>
+        <label><input type="checkbox" value="soybeans"> Soybeans</label>
+        <label><input type="checkbox" value="sesame"> Sesame</label>
+      </div>
+      <div class="field" style="margin-top:10px;">
+        <label>Specificity Level</label>
+        <select id="specificity">
+          <option value="item_level">Item-level (per menu item)</option>
+          <option value="category_level">Category-level (one general list)</option>
+          <option value="blanket_statement">Blanket statement ("ask your server")</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Accessibility &amp; Format</legend>
+      <div class="row2">
+        <div class="field">
+          <label>Clicks from Homepage</label>
+          <input type="text" id="clicks" placeholder="e.g. 2">
+        </div>
+        <div class="field">
+          <label>Clearly Labeled?</label>
+          <select id="labeled"><option value="true">Yes</option><option value="false">No</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Format</label>
+          <select id="format">
+            <option value="searchable_tool">Searchable tool</option>
+            <option value="organized_pdf">Organized PDF</option>
+            <option value="unorganized_pdf">Unorganized PDF</option>
+            <option value="plain_text">Plain text</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Page Count (if PDF)</label>
+          <input type="text" id="page-count" placeholder="e.g. 6">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Currency &amp; Disclosure</legend>
+      <div class="field">
+        <label>Last Updated Date (if shown)</label>
+        <input type="date" id="last-updated">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Mentions Cross-Contact?</label>
+          <select id="cross-contact"><option value="false">No</option><option value="true">Yes</option></select>
+        </div>
+        <div class="field">
+          <label>Mentions Shared Equipment?</label>
+          <select id="shared-equip"><option value="false">No</option><option value="true">Yes</option></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Evidence Quotes (copy exact text you're basing this on)</label>
+        <input type="text" id="evidence" placeholder="e.g. &quot;Contains milk, eggs, wheat, soy&quot;">
+      </div>
+    </fieldset>
+
+    <div class="score-preview" id="score-preview" style="display:none;">
+      <div class="big" id="score-total">--/100</div>
+      <div class="breakdown" id="score-breakdown"></div>
+    </div>
+
+    <button class="btn" id="submit-btn">Submit for Review</button>
+    <div class="status-msg" id="status-msg"></div>
+  </div>
+
+  <!-- SEARCH PANEL -->
+  <div class="panel" id="panel-search">
     <div class="search-box">
-      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="search-input" type="text" placeholder="Search by restaurant name..." autocomplete="off">
+      <input type="text" id="search-input" placeholder="Type a restaurant name to check if it's already done...">
     </div>
-    <div class="stats">
-      <div><strong id="stat-count">95</strong> restaurants indexed</div>
-      <div><strong>100%</strong> free to use</div>
-      <div><strong>US</strong>-focused</div>
-    </div>
+    <div id="search-results"></div>
   </div>
 
-  <div class="why-band">
-    <div class="why-inner">
-      <h2>Why this matters</h2>
-      <div class="why-grid">
-        <div class="why-stat">
-          <span class="num">33M</span>
-          <p>Americans live with a food allergy — roughly 1 in 10 adults and 1 in 13 children.</p>
-        </div>
-        <div class="why-stat">
-          <span class="num">3.4M</span>
-          <p>ER visits happen each year in the US for food allergy reactions.</p>
-        </div>
-        <div class="why-stat">
-          <span class="num">Up to 50%</span>
-          <p>Of fatal food allergy reactions happen in restaurants or other food-service establishments — exactly where published allergen info matters most.</p>
-        </div>
-        <div class="why-stat">
-          <span class="num">&uarr;50%</span>
-          <p>Rise in childhood food allergy prevalence in the US between 2007 and 2021 alone — and still climbing.</p>
-        </div>
-      </div>
-      <p class="why-source">Sources: <a href="https://www.foodallergy.org/resources/facts-and-statistics" target="_blank" rel="noopener">FARE</a> &middot; <a href="https://www.foodallergy.org/media-room/fare-releases-national-indicator-report-food-allergy" target="_blank" rel="noopener">FARE National Indicator Report</a> &middot; <a href="https://www.cdc.gov/mmwr/volumes/66/wr/mm6615a2.htm" target="_blank" rel="noopener">CDC (MMWR)</a></p>
-    </div>
-  </div>
-
-  <div class="main-content">
-    <div class="filter-row">
-      <span>Filter:</span>
-      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
-      <button class="filter-btn" onclick="setFilter('chain', this)">Chains</button>
-      <button class="filter-btn" onclick="setFilter('independent', this)">Independent</button>
-      <button class="filter-btn" onclick="setFilter('nyc', this)">NYC</button>
-    </div>
-    <div class="results-count" id="results-count"></div>
-    <div id="restaurant-grid"></div>
-    <div id="empty-state">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8C877D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <p>Nothing matched that search. <a href="#" onclick="showPage('submit'); return false;">Submit a restaurant</a></p>
-    </div>
+  <!-- LEADERBOARD PANEL -->
+  <div class="panel" id="panel-leaderboard">
+    <div id="leaderboard-list">Loading...</div>
   </div>
 </div>
-
-<!-- SUBMIT -->
-<div id="page-submit" class="page">
-  <div class="page-inner">
-    <h2>Submit a restaurant</h2>
-    <p class="subtitle">Know a restaurant with publicly available allergen info that we don't have yet? Fill this out and we'll verify the link and add it within a few days.</p>
-    <div class="form-box">
-      <div class="two-col">
-        <div class="field"><label>Restaurant name *</label><input type="text" id="f-name" placeholder="e.g. Shake Shack"></div>
-        <div class="field"><label>City / state</label><input type="text" id="f-city" placeholder="e.g. Newark, NJ"></div>
-      </div>
-      <div class="field"><label>Link to allergen info *</label><input type="url" id="f-url" placeholder="https://..."></div>
-      <div class="field">
-        <label>Source type</label>
-        <select id="f-source">
-          <option value="">Select one</option>
-          <option value="official">Official restaurant website</option>
-          <option value="official-pdf">Official restaurant PDF</option>
-          <option value="third-party">Third-party nutrition tool</option>
-          <option value="user">User submission / unverified</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Chain or independent?</label>
-        <select id="f-type">
-          <option value="">Select one</option>
-          <option value="chain">Chain (national/regional)</option>
-          <option value="independent">Independent restaurant</option>
-        </select>
-      </div>
-      <div class="field"><label>Notes (optional)</label><textarea id="f-notes" placeholder="Anything we should know — e.g. PDF only covers peanut/tree nut, updated Jan 2026, info may vary by location..."></textarea></div>
-      <div class="field"><label>Your name (optional)</label><input type="text" id="f-submitter" placeholder="We'll give you credit as a contributor"></div>
-      <button class="btn-green" onclick="submitForm()">Submit</button>
-      <div class="success-msg" id="form-success">Got it! We'll verify this and add it to the database within a few days. Thank you!</div>
-    </div>
-  </div>
-</div>
-
-<!-- ABOUT -->
-<div id="page-about" class="page">
-  <div class="about-inner">
-    <h2>About AllergyLocate</h2>
-    <p>Zamin Rizvi of FARE's (Food Allergy and Research) Teen Advisory Group built this database because finding allergen information before eating somewhere shouldn't require 20 minutes of Googling. Most major restaurants already publish allergen PDFs or interactive tools, and we've now built the one place to access them all.</p>
-    <p>All links are verified manually by Zamin and a team of researchers.</p>
-    <p><strong>AllergyLocate is not affiliated with, endorsed by, or sponsored by any restaurant listed.</strong> We are an independent, referential directory. Allergen information is collected from publicly available sources and user submissions.</p>
-
-    <div class="policy-callout">
-      <h3>NJ Senate Bill S3394</h3>
-      <p>The site exists to make allergen information more accessible online, but we can only make accessible what is available. NJ S3394 would mandate every restaurant to publish that information. With this database, research into how allergen information is made available online is streamlined.</p>
-      <p>The real gap? Independent restaurants. While we understand the limitations of small kitchens, the 33 million Americans managing food allergies deserve to be informed about whether or not the food they order contains something potentially deadly for them.</p>
-      <p><a href="https://www.njleg.state.nj.us/bill-search/2026/S3394" target="_blank" rel="noopener">Read the bill &rarr;</a></p>
-    </div>
-
-    <h3>The Transparency Score</h3>
-    <div class="score-preview">
-      <span class="score-tag">Now rolling out</span>
-      <p>AllergyLocate answers if a restaurant publishes allergen info. The Transparency Score goes one level deeper by rating how "good" that disclosure actually is. The score is evaluated on the following criteria: Completeness, Accessibility, Currency, Format, and Disclosure, with standards based in the <a href="https://adde.food-regulations.org/allergy-dining-report/" target="_blank" rel="noopener">Nutritics 2026 Allergy Dining Report</a> and California's <a href="https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260SB68" target="_blank" rel="noopener">SB 68 (Allergen Disclosure for Dining Experiences Act)</a>.</p>
-      <div class="score-bar-demo">
-        <span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span>
-      </div>
-      <p><strong>Completeness</strong> — does it cover all 9 major allergens, and is that listed per menu item or just as one general statement?<br>
-      <strong>Accessibility</strong> — how easy is it to actually find on the restaurant's own site?<br>
-      <strong>Currency</strong> — is there a visible date showing when it was last updated?<br>
-      <strong>Format</strong> — is it a searchable tool, an organized PDF, or something harder to use?<br>
-      <strong>Disclosure</strong> — does it mention shared equipment or cross-contact risk, not just ingredients?</p>
-      <p>We're still working on adding a score to each restaurant, but once every listing has a score, the Transparency Dashboard — tracking disclosure across regions, types, and price points — will be available for further research.</p>
-    </div>
-
-    <h3>The 9 major food allergens (US)</h3>
-    <p>Per the <a href="https://www.fda.gov/food/nutrition-food-labeling-and-critical-foods/food-allergies" target="_blank" rel="noopener">FDA</a>: milk, eggs, fish, shellfish, tree nuts, peanuts, wheat, soybeans, and sesame. Restaurants in this database publish information about some or all of these. Most disclosures are at the category level — for example, "tree nuts" rather than specific nuts like hazelnut or almond. Always confirm your specific allergen with the restaurant directly.</p>
-
-    <h3>Important limitations</h3>
-    <ul>
-      <li>Allergen information may be incomplete, outdated, or vary by location.</li>
-      <li>Cross-contact is always possible even when a dish is listed as allergen-free.</li>
-      <li>We link to publicly available information — we do not verify its medical accuracy.</li>
-      <li>This site does not provide medical advice. Always consult your doctor or allergist for guidance on managing your allergies.</li>
-      <li>Always confirm allergen information directly with the restaurant before ordering.</li>
-    </ul>
-
-    <div class="legal-box">
-      <strong>Legal notice:</strong> AllergyLocate is an independent informational directory. We do not reproduce allergen charts, menus, or restaurant content — we link to publicly available sources. All restaurant names are used for identification purposes only. AllergyLocate is not affiliated with, endorsed by, or sponsored by any restaurant listed. Information on this site is collected from publicly available sources and user submissions and is provided for reference only.
-    </div>
-
-    <div class="join-callout">
-      <h3>Join the AllergyLocate team</h3>
-      <p>This is a volunteer-built project, and it's growing faster than one person can verify. We're looking for help with restaurant research, outreach, and front-end development. If you're interested in public health and want to join a project investigating real-world application, we'd love to have you.</p>
-      <p>No food-allergy background required, just time, energy, and genuine interest in addressing this public health concern.</p>
-      <a class="btn-green" href="mailto:join@allergylocate.org">Get involved &rarr;</a>
-    </div>
-
-    <h3>Contact / corrections</h3>
-    <p>Broken link? Missing restaurant? Wrong information? Email <a href="mailto:issue@allergylocate.org">issue@allergylocate.org</a> or use the <a href="#" onclick="showPage('submit'); return false;">submit form</a>. We take accuracy seriously and will respond promptly.</p>
-  </div>
-</div>
-
-<footer>
-  <p>AllergyLocate.org &nbsp;&middot;&nbsp; <a href="#" onclick="showPage('about'); return false;">About</a> &nbsp;&middot;&nbsp; <a href="#" onclick="showPage('submit'); return false;">Submit a restaurant</a> &nbsp;&middot;&nbsp; <a href="mailto:issue@allergylocate.org">Contact</a></p>
-  <div class="footer-disclaimer">
-    AllergyLocate is not affiliated with, endorsed by, or sponsored by any restaurant listed. All restaurant names are used for identification purposes only. Allergen information is collected from publicly available sources and user submissions and may be incomplete, outdated, or vary by location. Always verify allergen information directly with the restaurant before eating. This site does not provide medical advice.
-  </div>
-</footer>
 
 <script>
-var TEAM_TOOL_URL = 'https://script.google.com/macros/s/AKfycbzxuNyfZPVy0GxyptBbvExCHuCEkKHEPqfsf0dMoK6c7U9SDVhbKynjgb8MS-9glBQZ/exec';
+  const TEAM_TOOL_URL = 'https://script.google.com/macros/s/AKfycbzxuNyfZPVy0GxyptBbvExCHuCEkKHEPqfsf0dMoK6c7U9SDVhbKynjgb8MS-9glBQZ/exec';
 
-var RESTAURANTS = [
-  {name:"In-N-Out Burger",url:"https://www.in-n-out.com/docs/default-source/downloads/in-n-out_allergen_info.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Boqueria",url:"https://boqueriarestaurant.com/allergy-charts/",type:"independent",nyc:true,checked:"July 2026"},
-  {name:"Carmine's",url:"https://carminesnyc.com/assets/uploads/general/carmines_allergies_menu_Dairy-n-Egg_20211126.pdf",type:"independent",nyc:true,checked:"July 2026"},
-  {name:"inday",url:"https://media-cdn.getbento.com/accounts/70f6a243176dfee2d001d2708d9b8097/media/Wxft95aWQsyW9PzmzOZk_1.%20Allergen%20Chart%20-%20Spring%202025.pdf",type:"independent",nyc:true,checked:"July 2026"},
-  {name:"The Tyger",url:"https://www.thetygernyc.com/menu/allergy-menus/",type:"independent",nyc:true,checked:"July 2026"},
-  {name:"Chipotle Mexican Grill",url:"https://www.chipotle.com/allergens",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"The Cheesecake Factory",url:"https://www.thecheesecakefactory.com/allergy",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Raising Cane's Chicken Fingers",url:"https://www.raisingcanes.com/allergens/",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Taiyaki NYC",url:"https://taiyakinyc.com/allergen-information",type:"independent",nyc:true,checked:"July 2026"},
-  {name:"McDonald's",url:"https://mcdonaldsbreakfastmenu.com/mcdonalds-allergen-menu/",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Burger King",url:"https://www.bk.com/allergens",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Starbucks",url:"https://www.starbucks.co.uk/quick-links/nutrition-info",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Taco Bell",url:"https://www.tacobell.com/nutrition/allergen-info",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Wendy's",url:"https://www.wendys.com/nutrition-allergens",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Chick-fil-A",url:"https://www.chick-fil-a.com/nutrition-allergens",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Domino's Pizza",url:"https://www.dominos.com/en/pages/content/nutritional/allergen-info",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Dunkin'",url:"https://www.dunkindonuts.com/content/dam/dd/pdf/allergy_ingredient_guide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Panda Express",url:"https://www.pandaexpress.com/nutritioninformation",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Five Guys",url:"https://www.fiveguys.com/wp-content/uploads/2025/07/five-guys-us-nutrition-allergen-guide-english-1-final.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Baskin-Robbins",url:"https://www.baskinrobbins.com/content/dam/br/pdf/BRAllergens.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Auntie Anne's",url:"https://assets.ctfassets.net/zqt8tllj2cy0/2jjVNaTNGDoMGd4QVucpSy/3c4afc16510a8a90368d67559422025e/Auntie-Annes-Nutrition-Guide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Wingstop",url:"https://cdn.bfldr.com/NDQASMJ1/as/2v4qqb9ww8mvcm64gnh7ktnc/WS_Allergens_1226_2",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Hunt Brothers Pizza",url:"https://www.huntbrotherspizza.com/wp-content/uploads/2019/06/Allergen-Information.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Dairy Queen",url:"https://www.dairyqueen.com/en-us/nutrition/food-treats/#nutrition-legend",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Little Caesars",url:"https://littlecaesars.com/static/usnutritionguide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Tim Hortons",url:"https://cdn.sanity.io/files/czqk28jt/prod_th_ca/8036c61bc915d31be1b75abf696263bb6ccd0890.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Steak 'n Shake",url:"https://app.everybite.com/widget/steak-n-shake",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Jollibee",url:"https://jollibee-prod-media.s3.us-west-2.amazonaws.com/20251114_JB_USA_Allergen_List_2025_474b21c47d.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"SONIC Drive-In",url:"https://www.sonicdrivein.com/nutrition-allergen/",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"NYC Street Grill",url:"https://nycstreetgrill.com/allergen-chart/",type:"independent",nyc:true,checked:"July 2026"},
-  {name:"Johnny's Pizza",url:"https://johnnyspizza.com/allergens/",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Streets of New York",url:"https://www.streetsofnewyork.com/files/allergens-streets-of-new-york-02-24-22-pdf.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"BJ's Restaurants",url:"https://bjsrestaurants.scene7.com/is/content/bjsrestaurants/0426_BJS_GLUTEN_ALLERGENpdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Dinosaur Bar-B-Que",url:"https://dinosaurbarbque.com/wp-content/uploads/2025/12/Allergen-Guide-In-House_12.11.2025.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Arby's",url:"https://assets.ctfassets.net/30q5w5l98nbx/3A0KfHgCWZv8al7gU36Jlg/d4e9d4f7c01a55ec87d630272a0bb072/Arbys_Nutritional_and_Allergen_AUG_2026.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Chili's Grill & Bar",url:"https://restaurant.nutritionix.com/chilis/landing",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Outback Steakhouse",url:"https://edge.sitecorecloud.io/osirestaurantpartners-piq24hos/media/Project/BBI/outback/static-pages/Obs-Full-Allergens-Information.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"LongHorn Steakhouse",url:"https://media.longhornsteakhouse.com/en_us/pdf/nutrition_allergen_guide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Subway",url:"https://www.subway.com/en-us/menunutrition/nutrition",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"QDOBA Mexican Eats",url:"https://www.qdoba.com/public/assets/documents/qdoba-allergen-information.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Papa Johns",url:"https://www.papajohns.com/allergens/papa-johns-allergen-guide.html",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Buffalo Wild Wings",url:"https://images.ctfassets.net/6dxmiqksdkqb/7B0sX9GOzCJph89lKqlvxu/0c1304413ec389e7f31c37e99dc92dc2/BWW_Allergen___Preparation_Guide__01-07-2026_-_02-24-2026_.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Carl's Jr.",url:"https://www.carlsjr.com/nutritional_info",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Moe's Southwest Grill",url:"https://assets.ctfassets.net/zqt8tllj2cy0/3Mh9GkDGVQcrIzQUpCyspY/200f37e957b84ee8079d54a5863dce51/Moes-Allergen-Chart-20250228-V2.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Jack in the Box",url:"http://assets.jackinthebox.com/pdf_attachment_settings/107/value/Allergen_Reference_Guide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Jersey Mike's Subs",url:"https://subs.jerseymikes.com/nutrition",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Del Taco",url:"https://deltaco.com/files/pdf/2026/allergens-02-2026.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"KFC",url:"https://www.kfc.com/nutrition/full-nutrition-guide",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Popeyes Louisiana Kitchen",url:"https://plk-use1-prod.sites.rbictg.com/nutrition/Popeyes_US_Allergen.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Sbarro",url:"https://sbarro.com/wp-content/uploads/2022/10/Sbarro-Nutrition-and-Allergen-Info-10.12.22.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"The Habit Burger Grill",url:"https://www.habitburger.com/nutrition",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Chopt Creative Salad Co.",url:"https://www.choptsalad.com/nutrition-and-allergens",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Bonefish Grill",url:"https://www.bonefishgrill.com/allergens",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Church's Texas Chicken",url:"https://cdn.sanity.io/files/at6verwz/production/404899e0e50003a294e15b233a0cee39013bc20c.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Cracker Barrel Old Country Store",url:"https://www.crackerbarrel.com/-/media/Project/cb-brandsite/brandsite/pdfs/AllergenGuide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Red Robin",url:"https://red-robin.widget.eagle.bigzpoon.com/home",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Insomnia Cookies",url:"https://api.insomniacookies.com/uploads/Insomnia%20Cookies%20Overall%20Nutritional%20Facts%20Guide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Panera Bread",url:"https://www.panerabread.com/content/dam/panerabread/documents/c6-26-allergen-guide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"TGI Fridays",url:"https://tgifridays.com/wp-content/uploads/2022/08/Nutritionals_0622_07272022-1.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Manhattan Bagel",url:"https://www.manhattanbagel.com/wp-content/uploads/2023/04/MCB-Nutrition-Guide-Master-2025-1.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"taim",url:"https://cdn.shopify.com/s/files/1/0639/7191/8052/files/taim_Allergen_Guide.pdf?v=1750783880",type:"independent",nyc:true,checked:"July 2026"},
-  {name:"Dos Toros Taqueria",url:"https://www.dostoros.com/nutrition",type:"independent",nyc:true,checked:"July 2026"},
-  {name:"S'MAC",url:"https://www.eatsmac.com/allergens/",type:"independent",nyc:true,checked:"July 2026"},
-  {name:"sweetgreen",url:"https://www.sweetgreen.com/menu",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"CAVA",url:"https://assets.ctfassets.net/kugm9fp9ib18/7KrOGNUFZjBddOWezWLWwm/f9cf7abd2116fa4fce16875139347395/CAVA-REC-GID-1225-NutriAllergReg.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Olive Garden",url:"https://media.olivegarden.com/en_us/pdf/allergen_guide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"The Halal Guys",url:"https://thehalalguys.com/nutritional-guide/",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Shake Shack",url:"https://shakeshack.widen.net/view/pdf/f0ckdbaukl/_Master-Nut--Allergen-1.6.26.pdf?u=e37zm5",type:"chain",nyc:true,checked:"July 2026"},
-  {name:"P.F. Chang's",url:"https://www.pfchangs.com/nutrition/allergens-to-go",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Red Lobster",url:"https://img-ecomm-rl-prod-fye5gqbxdtbghqer.a03.azurefd.net/brandsite/documents/US_Allergen_Final_Guide_6-29-26.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Cold Stone Creamery",url:"https://www.coldstonecreamery.com/nutrition/pdf/CSC_Food%20Allergies%20and%20Sensitivities.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Denny's",url:"https://media-platform.cdn4dd.com/media/online_ordering_asset/processed/7629ccb5-8dae-4e95-9c72-7754ce9850eb.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Carvel",url:"https://assets.ctfassets.net/zqt8tllj2cy0/rHwJy0WNZfOwxGfMNBev8/57300fb96aa43e393472a949cea81abc/CAR-Nutrition-Book-1.20.26.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Buca di Beppo",url:"https://dineatbuca.com/wp-content/uploads/2024/09/Buca-Nutritionals-5.03.2022.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Johnny Rockets",url:"https://www.johnnyrockets.com/wp-content/uploads/sites/3/2023/11/JR-Nutrition-Allergen-Info.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"IHOP",url:"https://www.ihop.com/en/nutrition/calculator",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Applebee's",url:"https://www.applebees.com/en/nutrition/interactive-menu",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Burger 21",url:"https://www.burger21.com/wp-content/uploads/2021/08/Chart_Allergen-Sensitivities_07.2021.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Pizza Hut",url:"https://www.nutritionix.com/pizza-hut/menu/special-diets/premium",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Hardee's",url:"https://www.hardees.com/nutritional-info",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Jimmy John's",url:"https://resources.jimmyjohns.com/downloadable-files/JimmyJohnsAllergenInformation.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Einstein Bros. Bagels",url:"https://www.einsteinbros.com/wp-content/uploads/2026/06/EBB-Nutrition-Guide-Master-2026-2.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Cinnabon",url:"https://assets.ctfassets.net/zqt8tllj2cy0/4YWnuLAUjL1keXkr0r1Joa/3f5350cf08e00f63e73201bcbbc75e72/CIN-Allergen-Chart-122025.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Zaxby's",url:"https://www.zaxbys.com/uploads/ZAX_NAI_Guide_Digital_Shrimp_1_2e67c1bddc.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Rita's Italian Ice",url:"https://cdn.ritasice.com/wp-content/uploads/2026/05/2026-Allergen-Chart.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Wow Bao",url:"https://www.wowbao.com/allergen-and-nutrition-guide/",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Smoothie King",url:"https://www.smoothieking.com/nutrition/",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Captain D's",url:"https://www.captainds.com/wp-content/uploads/2026/05/Captain-Ds-Nutrition-and-Allergen-Chart_2026-05-27.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Charleys Cheesesteaks & Wings",url:"https://www.charleys.com/wp-content/uploads/2023/04/Charleys-Cheesesteaks_Nutrition-Guide.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Noodles & Company",url:"https://noodles.mymenuhd.com/MyMenu/Restaurant?sView=default",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Not Your Average Joe's",url:"https://www.notyouraveragejoes.com/files/not-your-average-joes-allergen-info-2025-1-5-26-pdf.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Fogo de Chao",url:"https://glutenfreeglobetrotter.com/wp-content/uploads/2018/03/fogo-allergen-information_march-2018.pdf",type:"chain",nyc:false,checked:"July 2026"},
-  {name:"Maggiano's Little Italy",url:"https://maggianos-prod.cdn.prismic.io/maggianos-prod/aYyqWt0YXLCxVsdp_AllergenGuideforWebsite3.26.pdf",type:"chain",nyc:false,checked:"July 2026"}
-];
-
-
-var currentFilter = 'all';
-var currentSearch = '';
-
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-  var pg = document.getElementById('page-' + name);
-  if (pg) pg.classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-
-
-function setFilter(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-  renderGrid();
-}
-
-function renderGrid() {
-  var q = currentSearch.toLowerCase();
-  var f = currentFilter;
-
-  var results = RESTAURANTS.filter(function(r) {
-    var matchSearch = !q || r.name.toLowerCase().indexOf(q) !== -1;
-    var matchFilter = f === 'all'
-      || (f === 'chain' && r.type === 'chain')
-      || (f === 'independent' && r.type === 'independent')
-      || (f === 'nyc' && r.nyc);
-    return matchSearch && matchFilter;
+  // ---- Tab switching ----
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach((p) => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      if (tab.dataset.tab === 'leaderboard') loadLeaderboard();
+    });
   });
 
-  results.sort(function(a, b) {
-    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-  });
+  // ---- Live scoring (same logic as the backend, mirrored so team members see the score before submitting) ----
+  const MAJOR_ALLERGENS = ['milk','eggs','fish','shellfish','tree_nuts','peanuts','wheat','soybeans','sesame'];
+  const WEIGHTS = { completeness: 30, accessibility: 25, currency: 15, format: 15, crossContact: 15 };
 
-  var grid = document.getElementById('restaurant-grid');
-  var empty = document.getElementById('empty-state');
-  var count = document.getElementById('results-count');
+  function computeScore() {
+    const allergens = Array.from(document.querySelectorAll('#allergen-checks input:checked')).map(c => c.value);
+    const specificity = document.getElementById('specificity').value;
+    const clicks = parseInt(document.getElementById('clicks').value) || 1;
+    const labeled = document.getElementById('labeled').value === 'true';
+    const format = document.getElementById('format').value;
+    const pageCount = parseInt(document.getElementById('page-count').value) || null;
+    const lastUpdated = document.getElementById('last-updated').value;
+    const crossContact = document.getElementById('cross-contact').value === 'true';
+    const sharedEquip = document.getElementById('shared-equip').value === 'true';
 
-  if (results.length === 0) {
-    grid.innerHTML = '';
-    empty.style.display = 'block';
-    count.textContent = '';
-    return;
-  }
+    const ratio = allergens.length / MAJOR_ALLERGENS.length;
+    const multiplier = { item_level: 1.0, category_level: 0.75, blanket_statement: 0.3 }[specificity] || 0.3;
+    const completenessScore = Math.round(WEIGHTS.completeness * ratio * multiplier);
 
-  empty.style.display = 'none';
+    let accessScore = WEIGHTS.accessibility - Math.min(13, Math.max(0, (clicks - 1) * 4));
+    if (!labeled) accessScore -= 8;
+    accessScore = Math.max(0, accessScore);
 
-  if (q || f !== 'all') {
-    count.textContent = 'Showing ' + results.length + ' of ' + RESTAURANTS.length + ' restaurants';
-  } else {
-    count.textContent = 'Showing all ' + results.length + ' restaurants';
-  }
-
-  var html = '';
-  for (var i = 0; i < results.length; i++) {
-    var r = results[i];
-    html += '<div class="restaurant-row">';
-    html += '<div class="row-main">';
-    html += '<div class="row-name-line"><span class="row-name">' + r.name + '</span>';
-    if (r.nyc) html += '<span class="nyc-tag">NYC</span>';
-    if (typeof r.score === 'number') html += '<span class="score-badge">Transparency Score: ' + r.score + '/100</span>';
-    if (r.docFormat) html += '<span class="format-label">' + r.docFormat + '</span>';
-    html += '</div>';
-    if (r.checked) html += '<div class="row-checked">Last checked <span class="stamp">' + r.checked + '</span></div>';
-    html += '</div>';
-    html += '<a class="allergen-btn" href="' + r.url + '" target="_blank" rel="noopener noreferrer">';
-    html += '<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
-    html += 'Allergen info</a>';
-    html += '</div>';
-  }
-  grid.innerHTML = html;
-}
-
-// Trims whitespace and normalizes curly/smart apostrophes to a plain one,
-// so "Dave's" typed with a phone's auto-corrected curly apostrophe still
-// matches the existing "Dave's" entry instead of creating a duplicate.
-function normalizeRestaurantName(name) {
-  return (name || '')
-    .toString()
-    .trim()
-    .toLowerCase()
-    .replace(/[\u2018\u2019\u02BC]/g, "'");
-}
-
-async function syncLiveRestaurants() {
-  try {
-    var res = await fetch(TEAM_TOOL_URL + '?action=live');
-    var data = await res.json();
-    if (!data.restaurants) return;
-
-    data.restaurants.forEach(function(live) {
-      var existing = RESTAURANTS.find(function(r) {
-        return normalizeRestaurantName(r.name) === normalizeRestaurantName(live.name);
-      });
-      if (existing) {
-        existing.url = live.url;
-        existing.type = live.type;
-        existing.nyc = live.nyc;
-        existing.checked = live.checked;
-        existing.score = live.score;
-        existing.docFormat = live.format;
-      } else {
-        RESTAURANTS.push({
-          name: live.name,
-          url: live.url,
-          type: live.type,
-          nyc: live.nyc,
-          checked: live.checked,
-          score: live.score,
-          docFormat: live.format
-        });
-      }
-    });
-
-    document.getElementById('stat-count').textContent = RESTAURANTS.length;
-    renderGrid();
-  } catch (err) {
-    console.warn('Could not sync live restaurant data (site still works fine with existing data):', err.message);
-  }
-}
-
-async function submitForm() {
-  var name = document.getElementById('f-name').value.trim();
-  var url = document.getElementById('f-url').value.trim();
-  if (!name || !url) { alert('Please fill in the restaurant name and URL.'); return; }
-
-  var FORMSPREE_ID = 'mwvgoqnl';
-
-  try {
-    var res = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-      body: JSON.stringify({
-        restaurant: name,
-        url: url,
-        city: document.getElementById('f-city').value.trim(),
-        type: document.getElementById('f-type').value,
-        source: document.getElementById('f-source').value,
-        notes: document.getElementById('f-notes').value.trim(),
-        submitter: document.getElementById('f-submitter').value.trim()
-      })
-    });
-    if (res.ok) {
-      document.getElementById('form-success').style.display = 'block';
-      document.getElementById('f-name').value = '';
-      document.getElementById('f-url').value = '';
-      document.getElementById('f-city').value = '';
-      document.getElementById('f-notes').value = '';
-      document.getElementById('f-submitter').value = '';
-      document.getElementById('f-type').value = '';
-      document.getElementById('f-source').value = '';
-    } else {
-      alert('Something went wrong. Email your submission to issue@allergylocate.org instead.');
+    let currencyScore = 0;
+    let currencyReason = 'No update date found';
+    if (lastUpdated) {
+      const months = Math.round((new Date() - new Date(lastUpdated)) / (1000*60*60*24*30.44));
+      if (months <= 6) currencyScore = WEIGHTS.currency;
+      else if (months <= 12) currencyScore = 11;
+      else if (months <= 24) currencyScore = 6;
+      else currencyScore = 1;
+      currencyReason = `~${months} months old`;
     }
-  } catch(e) {
-    alert('Network error. Email issue@allergylocate.org with the restaurant info.');
-  }
-}
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('search-input').addEventListener('input', function() {
-    currentSearch = this.value;
-    renderGrid();
+    const formatScores = { searchable_tool: 15, organized_pdf: 10, unorganized_pdf: 4, plain_text: 6 };
+    let formatScore = formatScores[format] || 4;
+    if (format === 'unorganized_pdf' && pageCount > 15) formatScore = Math.max(0, formatScore - 2);
+
+    let ccScore = 0;
+    if (crossContact) ccScore += 9;
+    if (sharedEquip) ccScore += 6;
+
+    const total = completenessScore + accessScore + currencyScore + formatScore + ccScore;
+
+    document.getElementById('score-preview').style.display = 'block';
+    document.getElementById('score-total').textContent = total + '/100';
+    document.getElementById('score-breakdown').innerHTML = `
+      Completeness: ${completenessScore}/30 (${allergens.length}/9 allergens, ${specificity})<br>
+      Accessibility: ${accessScore}/25<br>
+      Currency: ${currencyScore}/15 (${currencyReason})<br>
+      Format: ${formatScore}/15<br>
+      Disclosure: ${ccScore}/15
+    `;
+
+    return { allergens, specificity, clicks, labeled, format, pageCount, lastUpdated, crossContact, sharedEquip, total };
+  }
+
+  document.querySelectorAll('#panel-submit input, #panel-submit select').forEach((el) => {
+    el.addEventListener('input', computeScore);
+    el.addEventListener('change', computeScore);
   });
-  document.getElementById('stat-count').textContent = RESTAURANTS.length;
-  renderGrid();
-  syncLiveRestaurants();
-});
+
+  // ---- Submission ----
+  document.getElementById('submit-btn').addEventListener('click', async () => {
+    const name = document.getElementById('team-name').value.trim();
+    const rName = document.getElementById('r-name').value.trim();
+    const rUrl = document.getElementById('r-url').value.trim();
+    const statusEl = document.getElementById('status-msg');
+
+    if (!name || !rName || !rUrl) {
+      statusEl.className = 'status-msg error';
+      statusEl.textContent = 'Please fill in your name, restaurant name, and source URL.';
+      return;
+    }
+
+    const scored = computeScore();
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const payload = {
+      restaurant_name: rName,
+      source_url: rUrl,
+      restaurant_type: document.getElementById('r-type').value,
+      is_nyc: document.getElementById('r-nyc').value === 'true',
+      submitted_by: name,
+      allergens_covered: scored.allergens,
+      specificity_level: scored.specificity,
+      clicks_from_homepage: scored.clicks,
+      labeled_clearly: scored.labeled,
+      url_type: 'official_site',
+      format: scored.format,
+      page_count: scored.pageCount,
+      last_updated_date: scored.lastUpdated || null,
+      mentions_cross_contact: scored.crossContact,
+      mentions_shared_equipment: scored.sharedEquip,
+      evidence_quotes: document.getElementById('evidence').value.trim()
+    };
+
+    try {
+      if (TEAM_TOOL_URL.includes('PASTE_YOUR')) {
+        throw new Error('Backend URL not configured yet — see the comment at the top of the script.');
+      }
+      const res = await fetch(TEAM_TOOL_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      statusEl.className = 'status-msg success';
+      statusEl.textContent = `Submitted! Score: ${data.score}/100. It'll show as "Needs Review" until approved.`;
+      updatePointsDisplay(name);
+    } catch (err) {
+      statusEl.className = 'status-msg error';
+      statusEl.textContent = 'Error: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Submit for Review';
+    }
+  });
+
+  // ---- Search ----
+  let searchTimeout;
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => runSearch(e.target.value), 300);
+  });
+
+  async function runSearch(query) {
+    const resultsEl = document.getElementById('search-results');
+    if (!query.trim() || TEAM_TOOL_URL.includes('PASTE_YOUR')) {
+      resultsEl.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Backend not connected yet.</p>';
+      return;
+    }
+    try {
+      const res = await fetch(`${TEAM_TOOL_URL}?action=search&q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      resultsEl.innerHTML = data.results.length
+        ? data.results.map(r => `<div class="result-row"><span>${r.name}</span><span class="status">${r.status} · ${r.score}/100</span></div>`).join('')
+        : '<p style="color:var(--ink-faint); font-size:13px;">No matches — this one might not be done yet!</p>';
+    } catch (err) {
+      resultsEl.innerHTML = '<p style="color:var(--amber); font-size:13px;">Search error: ' + err.message + '</p>';
+    }
+  }
+
+  // ---- Leaderboard ----
+  async function loadLeaderboard() {
+    const el = document.getElementById('leaderboard-list');
+    if (TEAM_TOOL_URL.includes('PASTE_YOUR')) {
+      el.innerHTML = '<p style="color:var(--ink-faint); font-size:13px;">Backend not connected yet.</p>';
+      return;
+    }
+    try {
+      const res = await fetch(`${TEAM_TOOL_URL}?action=leaderboard`);
+      const data = await res.json();
+      el.innerHTML = data.team.map((w, i) =>
+        `<div class="leaderboard-row"><span><span class="rank">#${i+1}</span> ${w.name}</span><span class="pts">${w.points} pts</span></div>`
+      ).join('') || '<p style="color:var(--ink-faint); font-size:13px;">No submissions yet — be the first!</p>';
+    } catch (err) {
+      el.innerHTML = '<p style="color:var(--amber); font-size:13px;">Couldn\'t load leaderboard.</p>';
+    }
+  }
+
+  async function updatePointsDisplay(name) {
+    if (TEAM_TOOL_URL.includes('PASTE_YOUR')) return;
+    try {
+      const res = await fetch(`${TEAM_TOOL_URL}?action=leaderboard`);
+      const data = await res.json();
+      const me = data.team.find(w => w.name === name);
+      document.getElementById('points-display').textContent = me ? `${me.points} points` : '0 points';
+    } catch (err) { /* silent fail, non-critical */ }
+  }
+
+  document.getElementById('points-display').textContent = 'Enter your name to see points';
+
+  // ---- Restaurant name autocomplete + duplicate warning ----
+  // Static list: restaurants already hardcoded on the live site (index.html).
+  // This needs a manual refresh here if that list changes significantly —
+  // it's a snapshot, not a live link to index.html.
+  const KNOWN_SITE_RESTAURANTS = ["In-N-Out Burger", "Boqueria", "Carmine's", "inday", "The Tyger", "Chipotle Mexican Grill", "The Cheesecake Factory", "Raising Cane's Chicken Fingers", "Taiyaki NYC", "McDonald's", "Burger King", "Starbucks", "Taco Bell", "Wendy's", "Chick-fil-A", "Domino's Pizza", "Dunkin'", "Panda Express", "Five Guys", "Baskin-Robbins", "Auntie Anne's", "Wingstop", "Hunt Brothers Pizza", "Dairy Queen", "Little Caesars", "Tim Hortons", "Steak 'n Shake", "Jollibee", "SONIC Drive-In", "NYC Street Grill", "Johnny's Pizza", "Streets of New York", "BJ's Restaurants", "Dinosaur Bar-B-Que", "Arby's", "Chili's Grill & Bar", "Outback Steakhouse", "LongHorn Steakhouse", "Subway", "QDOBA Mexican Eats", "Papa Johns", "Buffalo Wild Wings", "Carl's Jr.", "Moe's Southwest Grill", "Jack in the Box", "Jersey Mike's Subs", "Del Taco", "KFC", "Popeyes Louisiana Kitchen", "Sbarro", "The Habit Burger Grill", "Chopt Creative Salad Co.", "Bonefish Grill", "Church's Texas Chicken", "Cracker Barrel Old Country Store", "Red Robin", "Insomnia Cookies", "Panera Bread", "TGI Fridays", "Manhattan Bagel", "taim", "Dos Toros Taqueria", "S'MAC", "sweetgreen", "CAVA", "Olive Garden", "The Halal Guys", "Shake Shack", "P.F. Chang's", "Red Lobster", "Cold Stone Creamery", "Denny's", "Carvel", "Buca di Beppo", "Johnny Rockets", "IHOP", "Applebee's", "Burger 21", "Pizza Hut", "Hardee's", "Jimmy John's", "Einstein Bros. Bagels", "Cinnabon", "Zaxby's", "Rita's Italian Ice", "Wow Bao", "Smoothie King", "Captain D's", "Charleys Cheesesteaks & Wings", "Noodles & Company", "Not Your Average Joe's", "Dave's Hot Chicken", "Fogo de Chao", "Maggiano's Little Italy"];
+
+  var allKnownNames = KNOWN_SITE_RESTAURANTS.slice();
+
+  function normalizeRestaurantName(name) {
+    return (name || '').toString().trim().toLowerCase().replace(/[\u2018\u2019\u02BC]/g, "'");
+  }
+
+  function populateDatalist(names) {
+    const datalist = document.getElementById('known-restaurants');
+    datalist.innerHTML = names.map((n) => `<option value="${n}"></option>`).join('');
+  }
+
+  populateDatalist(allKnownNames);
+
+  // Merge in anything already submitted to the Sheet (covers names not yet on the live site)
+  if (!TEAM_TOOL_URL.includes('PASTE_YOUR')) {
+    fetch(`${TEAM_TOOL_URL}?action=allNames`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.names) return;
+        data.names.forEach((n) => {
+          if (!allKnownNames.some((existing) => normalizeRestaurantName(existing) === normalizeRestaurantName(n))) {
+            allKnownNames.push(n);
+          }
+        });
+        populateDatalist(allKnownNames);
+      })
+      .catch(() => { /* datalist just stays static-only if this fails, non-critical */ });
+  }
+
+  // Warn on blur if what was typed looks like a near-duplicate of something we already know about
+  document.getElementById('r-name').addEventListener('blur', function() {
+    const typed = this.value.trim();
+    if (!typed) return;
+    const match = allKnownNames.find((n) => normalizeRestaurantName(n) === normalizeRestaurantName(typed) && n !== typed);
+    if (match) {
+      const statusEl = document.getElementById('status-msg');
+      statusEl.className = 'status-msg error';
+      statusEl.innerHTML = `This might already exist as "<strong>${match}</strong>" (slightly different spelling/punctuation). <a href="#" id="use-existing-name" style="color:inherit; text-decoration:underline;">Use that exact name instead</a>`;
+      document.getElementById('use-existing-name').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('r-name').value = match;
+        statusEl.className = 'status-msg';
+        statusEl.textContent = '';
+      });
+    }
+  });
 </script>
 
 </body>

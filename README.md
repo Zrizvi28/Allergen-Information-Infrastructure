@@ -1,29 +1,17 @@
 # Allergen Information Infrastructure 
 An open, lightweight infrastructure for building local restaurant allergen-information directories.
 
-AllergyLocate.org is the first implementation of the system, currently focused on restaurant allergen information in the United States.
+AllergyLocate.org is the first implementation of the system, currently focused on restaurant allergen information in the tri-state area (Northeast United States)
 
 The goal is not just to maintain one directory, but to provide a model that other teams can adapt and deploy for their own communities.
 
 **Live site:** https://allergylocate.org
 
 ## Architecture:
-                 ALLERGEN INFORMATION INFRASTRUCTURE
-                              │
-             ┌────────────────┴────────────────┐
-             │                                 │
-       AllergyLocate                    Other Local Team
-       (reference)                             |
-             │                                 │
-             ▼                                 ▼
-       Local Database                    Local Database
-       Local Team Tool                   Local Team Tool
-       Local Scoring                     Local Scoring
-       Public Directory                  Public Directory
-             │                                 │
-             └──────────────┬──────────────────┘
-                            │
-        Dissemination of Restaurant Allergen Disclosures
+
+Allergen Information Infrastructure:
+
+Local submission via Frontend --> Backend API (validation, scoring, storage) --> Team Leaderboard (point system, rankings) --> Human Review (evidence quotes, link verification) --> Local Database --> Public Directory (Frontend)
 
 The system includes data collection, automated processing, human review, and public distribution.
 
@@ -33,7 +21,7 @@ The system includes data collection, automated processing, human review, and pub
 - Team Tool: private interface for reviewing and approving submissions
 - Public frontend: dynamically displays approved records from the backend
 
-The current implementation uses Google Sheets + Apps Script + HTML/CSS/JavaScript, requiring no paid infrastructure.
+The current implementation uses Google Sheets + Apps Script + HTML/CSS/JavaScript, requiring no paid infrastructure. Any team can deploy their own version without excessive time or resources.
 
 ## Replicable Model
 The architecture is intentionally designed to be easily replicated and spread.

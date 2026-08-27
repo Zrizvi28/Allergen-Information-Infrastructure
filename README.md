@@ -1,4 +1,4 @@
-# AllergyLocate
+# Allergen Information Infrastructure 
 An open, lightweight infrastructure for building local restaurant allergen-information directories.
 
 AllergyLocate.org is the first implementation of the system, currently focused on restaurant allergen information in the United States.
@@ -8,13 +8,22 @@ The goal is not just to maintain one directory, but to provide a model that othe
 **Live site:** https://allergylocate.org
 
 ## Architecture:
-flowchart LR 
-A[Local Submissions] --> B[Backend API] 
-B --> C[Automated Scoring] 
-C --> D[Review Queue] 
-D --> E[Local Team] 
-E -->|Approve| F[(Database)] 
-F --> G[Public Directory]
+                 ALLERGEN INFORMATION INFRASTRUCTURE
+                              │
+             ┌────────────────┴────────────────┐
+             │                                 │
+       AllergyLocate                    Other Local Team
+       (reference)                             |
+             │                                 │
+             ▼                                 ▼
+       Local Database                    Local Database
+       Local Team Tool                   Local Team Tool
+       Local Scoring                     Local Scoring
+       Public Directory                  Public Directory
+             │                                 │
+             └──────────────┬──────────────────┘
+                            │
+        Dissemination of Restaurant Allergen Disclosures
 
 The system includes data collection, automated processing, human review, and public distribution.
 

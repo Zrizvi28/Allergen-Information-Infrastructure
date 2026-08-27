@@ -1,9 +1,5 @@
 # Allergen Information Infrastructure 
-An open, lightweight infrastructure for building local restaurant allergen-information directories.
-
-AllergyLocate.org is the first implementation of the system, currently focused on restaurant allergen information in the tri-state area (Northeast United States)
-
-The goal is not just to maintain one directory, but to provide a model that other teams can adapt and deploy for their own communities.
+An open, lightweight infrastructure for building local restaurant allergen-information directories. AllergyLocate.org is the first implementation of the system — a US-wide index of allergen disclosures, primarily national chains, with a concentrated set of independent restaurants in NYC specifically. The goal is not just to maintain one directory, but to provide a model that other teams can adapt and deploy for their own communities. Live site: https://allergylocate.org
 
 **Live site:** https://allergylocate.org
 
@@ -11,14 +7,15 @@ The goal is not just to maintain one directory, but to provide a model that othe
 
 Allergen Information Infrastructure:
 
-Local submission via Frontend --> Backend API (validation, scoring, storage) --> Team Leaderboard (point system, rankings) --> Human Review (evidence quotes, link verification) --> Local Database --> Public Directory (Frontend)
+Team Tool (submission form, live score preview) → Backend API / Google Apps Script (calculates Transparency Score, writes record to Google Sheet as "Needs Review") → Google Sheet (actual database — Restaurants + Team tabs, cloud-hosted, not local) → Human Review (evidence quotes checked against the real source document, one-click Approve) → Public Directory / Live Site (auto-fetches every "Approved" restaurant from the Backend API on page load, no manual step)
 
 The system includes data collection, automated processing, human review, and public distribution.
 
 ## Components
 - Database: stores restaurants, submissions, review status, and team information (+ an aesthetically engaging leaderboard)
-- Apps Script backend: API layer for scoring, validation, storage, and retrieval
-- Team Tool: private interface for reviewing and approving submissions
+- Apps Script backend: API layer for scoring, storage, and retrieval
+- Team Tool: private interface for submitting new restaurants, searching existing ones, and checking the leaderboard
+- Google Sheet: also where human review and one-click approval happen via a custom menu
 - Public frontend: dynamically displays approved records from the backend
 
 The current implementation uses Google Sheets + Apps Script + HTML/CSS/JavaScript, requiring no paid infrastructure. Any team can deploy their own version without excessive time or resources.
@@ -46,10 +43,10 @@ Local teams should be able to maintain trustworthy allergen-information infrastr
 
 AllergyLocate current features include:
 
-- 94+ restaurant records
+- 94 restaurant records
 - automated submission scoring
 - review states
-- private team moderation tool
+- private team submission tool (separate from the Sheet-based review/approval step)
 - dynamically populated public directory
 - restaurant-source verification
 - allergen-information transparency scoring

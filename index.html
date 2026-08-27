@@ -803,6 +803,17 @@ function renderGrid() {
   grid.innerHTML = html;
 }
 
+// Trims whitespace and normalizes curly/smart apostrophes to a plain one,
+// so "Dave's" typed with a phone's auto-corrected curly apostrophe still
+// matches the existing "Dave's" entry instead of creating a duplicate.
+function normalizeRestaurantName(name) {
+  return (name || '')
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/[\u2018\u2019\u02BC]/g, "'");
+}
+
 async function syncLiveRestaurants() {
   try {
     var res = await fetch(TEAM_TOOL_URL + '?action=live');
@@ -811,7 +822,7 @@ async function syncLiveRestaurants() {
 
     data.restaurants.forEach(function(live) {
       var existing = RESTAURANTS.find(function(r) {
-        return r.name.toLowerCase() === live.name.toLowerCase();
+        return normalizeRestaurantName(r.name) === normalizeRestaurantName(live.name);
       });
       if (existing) {
         existing.url = live.url;

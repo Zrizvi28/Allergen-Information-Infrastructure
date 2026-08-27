@@ -122,7 +122,8 @@
     <div class="row2">
       <div class="field">
         <label>Restaurant Name *</label>
-        <input type="text" id="r-name" placeholder="e.g. Shake Shack">
+        <input type="text" id="r-name" list="known-restaurants" placeholder="e.g. Shake Shack" autocomplete="off">
+        <datalist id="known-restaurants"></datalist>
       </div>
       <div class="field">
         <label>Source URL *</label>
@@ -321,6 +322,15 @@
     el.addEventListener('change', computeScore);
   });
 
+  // ---- Passcode (never stored in source — entered at runtime, kept in sessionStorage) ----
+  function getTeamSecret() {
+    var stored = sessionStorage.getItem('allergylocate_team_secret');
+    if (stored) return stored;
+    var entered = prompt('Enter the team passcode to submit:');
+    if (entered) sessionStorage.setItem('allergylocate_team_secret', entered);
+    return entered || '';
+  }
+
   // ---- Submission ----
   document.getElementById('submit-btn').addEventListener('click', async () => {
     const name = document.getElementById('team-name').value.trim();
@@ -334,12 +344,15 @@
       return;
     }
 
+    const teamSecret = getTeamSecret();
+
     const scored = computeScore();
     const btn = document.getElementById('submit-btn');
     btn.disabled = true;
     btn.textContent = 'Submitting...';
 
     const payload = {
+      team_secret: teamSecret,
       restaurant_name: rName,
       source_url: rUrl,
       restaurant_type: document.getElementById('r-type').value,
@@ -367,6 +380,14 @@
         body: JSON.stringify(payload)
       });
       const data = await res.json();
+
+      if (data.success === false) {
+        sessionStorage.removeItem('allergylocate_team_secret'); // clear bad passcode so next attempt re-prompts
+        statusEl.className = 'status-msg error';
+        statusEl.textContent = data.error || 'Submission was rejected.';
+        return;
+      }
+
       statusEl.className = 'status-msg success';
       statusEl.textContent = `Submitted! Score: ${data.score}/100. It'll show as "Needs Review" until approved.`;
       updatePointsDisplay(name);
@@ -432,6 +453,59 @@
   }
 
   document.getElementById('points-display').textContent = 'Enter your name to see points';
+
+  // ---- Restaurant name autocomplete + duplicate warning ----
+  // Static list: restaurants already hardcoded on the live site (index.html).
+  // This needs a manual refresh here if that list changes significantly —
+  // it's a snapshot, not a live link to index.html.
+  const KNOWN_SITE_RESTAURANTS = ["In-N-Out Burger", "Boqueria", "Carmine's", "inday", "The Tyger", "Chipotle Mexican Grill", "The Cheesecake Factory", "Raising Cane's Chicken Fingers", "Taiyaki NYC", "McDonald's", "Burger King", "Starbucks", "Taco Bell", "Wendy's", "Chick-fil-A", "Domino's Pizza", "Dunkin'", "Panda Express", "Five Guys", "Baskin-Robbins", "Auntie Anne's", "Wingstop", "Hunt Brothers Pizza", "Dairy Queen", "Little Caesars", "Tim Hortons", "Steak 'n Shake", "Jollibee", "SONIC Drive-In", "NYC Street Grill", "Johnny's Pizza", "Streets of New York", "BJ's Restaurants", "Dinosaur Bar-B-Que", "Arby's", "Chili's Grill & Bar", "Outback Steakhouse", "LongHorn Steakhouse", "Subway", "QDOBA Mexican Eats", "Papa Johns", "Buffalo Wild Wings", "Carl's Jr.", "Moe's Southwest Grill", "Jack in the Box", "Jersey Mike's Subs", "Del Taco", "KFC", "Popeyes Louisiana Kitchen", "Sbarro", "The Habit Burger Grill", "Chopt Creative Salad Co.", "Bonefish Grill", "Church's Texas Chicken", "Cracker Barrel Old Country Store", "Red Robin", "Insomnia Cookies", "Panera Bread", "TGI Fridays", "Manhattan Bagel", "taim", "Dos Toros Taqueria", "S'MAC", "sweetgreen", "CAVA", "Olive Garden", "The Halal Guys", "Shake Shack", "P.F. Chang's", "Red Lobster", "Cold Stone Creamery", "Denny's", "Carvel", "Buca di Beppo", "Johnny Rockets", "IHOP", "Applebee's", "Burger 21", "Pizza Hut", "Hardee's", "Jimmy John's", "Einstein Bros. Bagels", "Cinnabon", "Zaxby's", "Rita's Italian Ice", "Wow Bao", "Smoothie King", "Captain D's", "Charleys Cheesesteaks & Wings", "Noodles & Company", "Not Your Average Joe's", "Dave's Hot Chicken", "Fogo de Chao", "Maggiano's Little Italy"];
+
+  var allKnownNames = KNOWN_SITE_RESTAURANTS.slice();
+
+  function normalizeRestaurantName(name) {
+    return (name || '').toString().trim().toLowerCase().replace(/[\u2018\u2019\u02BC]/g, "'");
+  }
+
+  function populateDatalist(names) {
+    const datalist = document.getElementById('known-restaurants');
+    datalist.innerHTML = names.map((n) => `<option value="${n}"></option>`).join('');
+  }
+
+  populateDatalist(allKnownNames);
+
+  // Merge in anything already submitted to the Sheet (covers names not yet on the live site)
+  if (!TEAM_TOOL_URL.includes('PASTE_YOUR')) {
+    fetch(`${TEAM_TOOL_URL}?action=allNames`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.names) return;
+        data.names.forEach((n) => {
+          if (!allKnownNames.some((existing) => normalizeRestaurantName(existing) === normalizeRestaurantName(n))) {
+            allKnownNames.push(n);
+          }
+        });
+        populateDatalist(allKnownNames);
+      })
+      .catch(() => { /* datalist just stays static-only if this fails, non-critical */ });
+  }
+
+  // Warn on blur if what was typed looks like a near-duplicate of something we already know about
+  document.getElementById('r-name').addEventListener('blur', function() {
+    const typed = this.value.trim();
+    if (!typed) return;
+    const match = allKnownNames.find((n) => normalizeRestaurantName(n) === normalizeRestaurantName(typed) && n !== typed);
+    if (match) {
+      const statusEl = document.getElementById('status-msg');
+      statusEl.className = 'status-msg error';
+      statusEl.innerHTML = `This might already exist as "<strong>${match}</strong>" (slightly different spelling/punctuation). <a href="#" id="use-existing-name" style="color:inherit; text-decoration:underline;">Use that exact name instead</a>`;
+      document.getElementById('use-existing-name').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('r-name').value = match;
+        statusEl.className = 'status-msg';
+        statusEl.textContent = '';
+      });
+    }
+  });
 </script>
 
 </body>

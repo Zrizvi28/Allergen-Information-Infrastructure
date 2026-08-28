@@ -1,5 +1,5 @@
 # Allergen Information Infrastructure 
-An open, lightweight infrastructure for building local restaurant allergen-information directories. AllergyLocate.org is the first implementation of the system — a US-wide index of allergen disclosures, primarily national chains, with a concentrated set of independent restaurants in NYC specifically. The goal is not just to maintain one directory, but to provide a model that other teams can adapt and deploy for their own communities.
+An open, lightweight infrastructure for building local restaurant allergen-information directories. AllergyLocate.org is the first implementation of the system, a US-wide index of allergen disclosures, primarily national chains, with a concentrated set of independent restaurants in NYC specifically. The goal is not just to maintain one directory, but to provide a model that other teams can adapt and deploy for their own communities.
 
 **Live site:** https://allergylocate.org
 

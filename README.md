@@ -1,5 +1,5 @@
 # Allergen Information Infrastructure 
-An open, lightweight infrastructure for building local restaurant allergen-information directories. AllergyLocate.org is the first implementation of the system — a US-wide index of allergen disclosures, primarily national chains, with a concentrated set of independent restaurants in NYC specifically. The goal is not just to maintain one directory, but to provide a model that other teams can adapt and deploy for their own communities. Live site: https://allergylocate.org
+An open, lightweight infrastructure for building local restaurant allergen-information directories. AllergyLocate.org is the first implementation of the system — a US-wide index of allergen disclosures, primarily national chains, with a concentrated set of independent restaurants in NYC specifically. The goal is not just to maintain one directory, but to provide a model that other teams can adapt and deploy for their own communities.
 
 **Live site:** https://allergylocate.org
 
@@ -7,7 +7,7 @@ An open, lightweight infrastructure for building local restaurant allergen-infor
 
 Allergen Information Infrastructure:
 
-Team Tool (submission form, live score preview) → Backend API / Google Apps Script (calculates Transparency Score, writes record to Google Sheet as "Needs Review") → Google Sheet (actual database — Restaurants + Team tabs, cloud-hosted, not local) → Human Review (evidence quotes checked against the real source document, one-click Approve) → Public Directory / Live Site (auto-fetches every "Approved" restaurant from the Backend API on page load, no manual step)
+Team Tool (submission form, live score preview) → Backend API / Google Apps Script (calculates Transparency Score, writes record to Google Sheet as "Needs Review") → Google Sheet (Restaurants + Team tabs, cloud-hosted) → Human Review (evidence quotes checked against the real source document, one-click Approve) → Public Directory/Live Site (auto-fetches every "Approved" restaurant from the Backend API on page load)
 
 The system includes data collection, automated processing, human review, and public distribution.
 

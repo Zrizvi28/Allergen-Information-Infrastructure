@@ -262,7 +262,7 @@
 
   // ---- Live scoring (same logic as the backend, mirrored so team members see the score before submitting) ----
   const MAJOR_ALLERGENS = ['milk','eggs','fish','shellfish','tree_nuts','peanuts','wheat','soybeans','sesame'];
-  const WEIGHTS = { completeness: 30, accessibility: 25, currency: 15, format: 15, crossContact: 15 };
+  const WEIGHTS = { completeness: 30, accessibility: 25, currency: 18, format: 14, crossContact: 13 };
 
   function computeScore() {
     const allergens = Array.from(document.querySelectorAll('#allergen-checks input:checked')).map(c => c.value);
@@ -294,13 +294,13 @@
       currencyReason = `~${months} months old`;
     }
 
-    const formatScores = { searchable_tool: 15, organized_pdf: 10, unorganized_pdf: 4, plain_text: 6 };
+    const formatScores = { searchable_tool: 14, organized_pdf: 9, unorganized_pdf: 4, plain_text: 6 };
     let formatScore = formatScores[format] || 4;
     if (format === 'unorganized_pdf' && pageCount > 15) formatScore = Math.max(0, formatScore - 2);
 
     let ccScore = 0;
-    if (crossContact) ccScore += 9;
-    if (sharedEquip) ccScore += 6;
+    if (crossContact) ccScore += 8;
+    if (sharedEquip) ccScore += 5;
 
     const total = completenessScore + accessScore + currencyScore + formatScore + ccScore;
 
@@ -309,9 +309,9 @@
     document.getElementById('score-breakdown').innerHTML = `
       Completeness: ${completenessScore}/30 (${allergens.length}/9 allergens, ${specificity})<br>
       Accessibility: ${accessScore}/25<br>
-      Currency: ${currencyScore}/15 (${currencyReason})<br>
-      Format: ${formatScore}/15<br>
-      Disclosure: ${ccScore}/15
+      Currency: ${currencyScore}/18 (${currencyReason})<br>
+      Format: ${formatScore}/14<br>
+      Disclosure: ${ccScore}/13
     `;
 
     return { allergens, specificity, clicks, labeled, format, pageCount, lastUpdated, crossContact, sharedEquip, total };
